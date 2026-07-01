@@ -173,7 +173,7 @@ export default function Home() {
             custom={1}
             className="mx-auto mt-7 max-w-xl text-lg leading-8 text-[var(--color-mist)] sm:text-xl"
           >
-            Premium websites and web apps, designed and shipped fast.
+            Premium websites and web apps, designed and executed fast.
           </motion.p>
 
           <motion.div
