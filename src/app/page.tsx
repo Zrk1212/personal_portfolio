@@ -377,10 +377,14 @@ function ReactiveGrid() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    const ctx = canvas.getContext("2d");
-    if (!ctx) return;
+    const canvasEl = canvasRef.current;
+    if (!canvasEl) return;
+    const ctxMaybe = canvasEl.getContext("2d");
+    if (!ctxMaybe) return;
+    // Non-null aliases so the nested draw/resize closures type-check cleanly
+    // (TS doesn't carry the guard narrowing into hoisted function declarations).
+    const canvas: HTMLCanvasElement = canvasEl;
+    const ctx: CanvasRenderingContext2D = ctxMaybe;
 
     const reduced = window.matchMedia(
       "(prefers-reduced-motion: reduce)"
