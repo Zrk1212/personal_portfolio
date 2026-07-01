@@ -336,10 +336,10 @@ export default function Home() {
           </p>
           <div className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
             <a
-              href="mailto:zacklein555@gmail.com"
+              href="/contact"
               className="shine inline-flex h-[3.25rem] items-center justify-center rounded-full bg-[var(--color-lime)] px-8 text-base font-semibold text-[#0a0a0a] transition-transform duration-300 hover:scale-[1.03]"
             >
-              zacklein555@gmail.com
+              Get in touch
             </a>
             <a
               href="https://github.com/Zrk1212"
