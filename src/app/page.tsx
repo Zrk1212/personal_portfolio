@@ -161,7 +161,7 @@ export default function Home() {
             initial="hidden"
             animate="show"
             custom={0}
-            className="mx-auto whitespace-nowrap font-[family-name:var(--font-display)] text-[clamp(1.6rem,6.6vw,5.5rem)] font-semibold leading-[1.05] tracking-tight text-[var(--color-bone)]"
+            className="mx-auto whitespace-normal sm:whitespace-nowrap font-[family-name:var(--font-display)] text-[clamp(1.6rem,6.6vw,5.5rem)] font-semibold leading-[1.05] tracking-tight text-[var(--color-bone)]"
           >
             Your <span className="text-gradient italic">ambition</span> is the limit.
           </motion.h1>
