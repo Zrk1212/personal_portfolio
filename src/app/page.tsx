@@ -45,6 +45,18 @@ const PROJECTS: Project[] = [
     image: "/work/vantage.png",
   },
   {
+    title: "Hoos Planner",
+    blurb:
+      "An AI schedule advisor for UVA undergrads. Describe your semester and it builds a conflict-free week from real class data, tracks every requirement for your school and major, and plugs straight into Claude and ChatGPT.",
+    tags: ["Next.js", "AI", "Supabase"],
+    year: "2026",
+    hue: "#3b6cf6",
+    hue2: "#e57200",
+    href: "https://hoosplanner.zrk.ventures",
+    url: "hoosplanner.zrk.ventures",
+    image: "/work/hoos-planner.png",
+  },
+  {
     title: "Scent Smart",
     blurb:
       "Matches premium colognes to affordable dupes that smell nearly identical, and breaks down what each fragrance note does. A fast, focused fragrance finder.",
@@ -229,7 +241,7 @@ export default function Home() {
             title="Recent builds, shipped and live."
           />
 
-          <div className="mt-16 grid gap-6 sm:grid-cols-2">
+          <div className="mt-16 grid gap-6 sm:grid-cols-2 sm:[&>*:last-child:nth-child(odd)]:col-span-2 sm:[&>*:last-child:nth-child(odd)]:mx-auto sm:[&>*:last-child:nth-child(odd)]:w-[calc(50%-0.75rem)]">
             {PROJECTS.map((p, i) => (
               <ProjectCard key={p.title} project={p} index={i} />
             ))}
