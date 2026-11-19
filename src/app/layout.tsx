@@ -21,6 +21,7 @@ const fraunces = Fraunces({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://zrk.ventures"),
   title: "Zac Klein · Websites built at the speed of ambition",
   description:
     "Independent web designer and developer. I design and ship fast, modern, conversion-ready websites and web apps for founders and local businesses.",

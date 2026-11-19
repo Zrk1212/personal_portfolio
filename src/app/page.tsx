@@ -371,9 +371,17 @@ export default function Home() {
           <div className="font-[family-name:var(--font-display)] text-lg font-medium text-[var(--color-bone)]">
             Zac Klein
           </div>
-          <p className="text-sm text-[var(--color-faint)]">
-            Designed and built by Zac Klein.
-          </p>
+          <div className="flex items-center gap-6">
+            <a
+              href="/apify"
+              className="text-sm text-[var(--color-mist)] transition-colors hover:text-[var(--color-bone)]"
+            >
+              Data tools on Apify
+            </a>
+            <p className="text-sm text-[var(--color-faint)]">
+              Designed and built by Zac Klein.
+            </p>
+          </div>
         </div>
       </footer>
     </div>
@@ -570,6 +578,7 @@ function Nav() {
     ["Work", "#work"],
     ["Process", "#process"],
     ["About", "#about"],
+    ["Apify", "/apify"],
   ];
   return (
     <motion.header
