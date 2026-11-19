@@ -178,7 +178,7 @@ const FAQ = [
   },
   {
     q: "Do they need AI accounts?",
-    a: "Most AI tools have age limits. Claude requires users to be 18 or older, and ChatGPT allows ages 13 to 17 only with a parent's permission. So the accounts are set up in a parent's name, and we do that together in the first session.",
+    a: "Most AI tools have age limits. Claude is for users 18 and older, and ChatGPT allows ages 13 to 17 with a parent's permission. In the first session we go over what each tool allows at your student's age and set up any accounts in your name, so you stay in the loop.",
   },
   {
     q: "Is this cheating?",
