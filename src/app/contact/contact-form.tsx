@@ -59,11 +59,13 @@ export default function ContactForm() {
         },
         body: JSON.stringify({
           access_key: ACCESS_KEY,
-          subject: `New project inquiry from ${data.name || "your site"}`,
-          from_name: "Zac Klein Portfolio",
+          subject: `New tutoring inquiry from ${data.name || "your site"}`,
+          from_name: "Zac Klein Tutoring",
           name: data.name,
           email: data.email,
-          company: data.company,
+          grade: data.grade,
+          app_type: data.app_type,
+          format: data.format,
           message: data.message,
         }),
       });
@@ -99,22 +101,22 @@ export default function ContactForm() {
           </Link>
           <div className="hidden items-center gap-8 sm:flex">
             <Link
-              href="/#work"
+              href="/#learn"
               className="text-sm text-[var(--color-mist)] transition-colors hover:text-[var(--color-bone)]"
             >
-              Work
+              Learn
             </Link>
             <Link
               href="/#process"
               className="text-sm text-[var(--color-mist)] transition-colors hover:text-[var(--color-bone)]"
             >
-              Process
+              Sessions
             </Link>
             <Link
-              href="/#about"
+              href="/#pricing"
               className="text-sm text-[var(--color-mist)] transition-colors hover:text-[var(--color-bone)]"
             >
-              About
+              Pricing
             </Link>
           </div>
           <Link
@@ -155,11 +157,11 @@ export default function ContactForm() {
               Get in touch
             </p>
             <h1 className="mt-6 max-w-xl font-[family-name:var(--font-display)] text-[clamp(2.4rem,6vw,4.4rem)] font-semibold leading-[1.02] tracking-tight text-[var(--color-bone)]">
-              Tell me about your <span className="text-gradient italic">project</span>.
+              Tell me about your <span className="text-gradient italic">student</span>.
             </h1>
             <p className="mt-7 max-w-md text-lg leading-8 text-[var(--color-mist)]">
-              Share a few details and I&apos;ll get back to you within a day with
-              thoughts on how to approach it. No pressure, no sales fluff.
+              Share a few details and I&apos;ll get back to you within a day to
+              set up a first session. No pressure, and no app idea needed yet.
             </p>
             <div className="mt-9 space-y-4">
               <a
@@ -252,27 +254,53 @@ export default function ContactForm() {
                     type="email"
                     required
                     autoComplete="email"
-                    placeholder="you@company.com"
+                    placeholder="you@email.com"
                     className={inputClass}
                   />
                 </Field>
 
-                <Field label="Company / Project" optional>
-                  <input
-                    name="company"
-                    type="text"
-                    autoComplete="organization"
-                    placeholder="Optional"
-                    className={inputClass}
-                  />
-                </Field>
+                <div className="space-y-5">
+                  <Field label="Student's grade">
+                    <Select
+                      name="grade"
+                      options={[
+                        ["9", "9th"],
+                        ["10", "10th"],
+                        ["11", "11th"],
+                        ["12", "12th"],
+                      ]}
+                    />
+                  </Field>
 
-                <Field label="What do you have in mind?">
+                  <Field label="Web app or iOS app?">
+                    <Select
+                      name="app_type"
+                      options={[
+                        ["Web app", "Web app"],
+                        ["iOS app", "iOS app"],
+                        ["Not sure yet", "Not sure yet"],
+                      ]}
+                    />
+                  </Field>
+
+                  <Field label="In person or Zoom?">
+                    <Select
+                      name="format"
+                      options={[
+                        ["In person", "In person"],
+                        ["Zoom", "Zoom"],
+                        ["Either", "Either"],
+                      ]}
+                    />
+                  </Field>
+                </div>
+
+                <Field label="What is your student interested in, and do they have an app idea yet?">
                   <textarea
                     name="message"
                     required
                     rows={5}
-                    placeholder="A few sentences about your goals, timeline, and budget if you have one."
+                    placeholder="A few sentences is plenty. It's fine if there's no idea yet."
                     className={`${inputClass} resize-none`}
                   />
                 </Field>
@@ -318,6 +346,40 @@ export default function ContactForm() {
 
 const inputClass =
   "w-full rounded-2xl border border-[var(--color-hair)] bg-white/[0.03] px-4 py-3 text-[15px] text-[var(--color-bone)] placeholder:text-[var(--color-faint)] transition-colors outline-none focus:border-[var(--color-lime)] focus:bg-white/[0.05]";
+
+function Select({
+  name,
+  options,
+}: {
+  name: string;
+  options: [value: string, label: string][];
+}) {
+  return (
+    <div className="relative">
+      <select
+        name={name}
+        required
+        defaultValue=""
+        className={`${inputClass} appearance-none pr-10 [&:invalid]:text-[var(--color-faint)]`}
+      >
+        <option value="" disabled>
+          Choose
+        </option>
+        {options.map(([value, label]) => (
+          <option key={value} value={value} className="bg-[var(--color-panel)] text-[var(--color-bone)]">
+            {label}
+          </option>
+        ))}
+      </select>
+      <span
+        aria-hidden
+        className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-xs text-[var(--color-faint)]"
+      >
+        &#9662;
+      </span>
+    </div>
+  );
+}
 
 function Field({
   label,

@@ -2,13 +2,13 @@ import type { Metadata } from "next";
 import ContactForm from "./contact-form";
 
 export const metadata: Metadata = {
-  title: "Contact · Zac Klein",
+  title: "Book a session · Zac Klein",
   description:
-    "Start a project with Zac Klein. Tell me about your website or web app and I'll get back to you within a day.",
+    "Book a one-on-one session where your high schooler builds a real web or iOS app with AI. Tell me about your student and I'll get back to you within a day.",
   openGraph: {
-    title: "Contact · Zac Klein",
+    title: "Book a session · Zac Klein",
     description:
-      "Start a project with Zac Klein. Tell me about your website or web app and I'll get back to you within a day.",
+      "Book a one-on-one session where your high schooler builds a real web or iOS app with AI. Tell me about your student and I'll get back to you within a day.",
     type: "website",
   },
 };

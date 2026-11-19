@@ -22,13 +22,13 @@ const fraunces = Fraunces({
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://zrk.ventures"),
-  title: "Zac Klein · Websites built at the speed of ambition",
+  title: "Zac Klein · Teaching high schoolers to build real apps with AI",
   description:
-    "Independent web designer and developer. I design and ship fast, modern, conversion-ready websites and web apps for founders and local businesses.",
+    "One-on-one sessions where high school students build and launch a real web or iOS app with AI. In person in Westchester or over Zoom.",
   openGraph: {
-    title: "Zac Klein · Web design and development",
+    title: "Zac Klein · Teaching high schoolers to build real apps with AI",
     description:
-      "I design and ship fast, modern websites and web apps. See selected work and start a project.",
+      "One-on-one sessions where high school students build and launch a real web or iOS app with AI, and learn skills that carry over to whatever they build next.",
     type: "website",
   },
 };

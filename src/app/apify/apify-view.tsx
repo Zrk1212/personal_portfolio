@@ -131,7 +131,7 @@ export default function ApifyView() {
           <div className="hidden items-center gap-8 sm:flex">
             {[
               ["Work", "/#work"],
-              ["Process", "/#process"],
+              ["Sessions", "/#process"],
               ["About", "/#about"],
             ].map(([label, href]) => (
               <Link
