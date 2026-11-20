@@ -185,3 +185,276 @@ body {
     scroll-behavior: auto !important;
   }
 }
+
+/* ============================================================
+   Tutoring site theme (homepage + /contact)
+   Navy-charcoal and warm-white sections, one indigo accent.
+   Scoped to .m-site so /apify keeps the studio theme above.
+   ============================================================ */
+
+body:has(.m-site) {
+  background: #171721;
+}
+body:has(.m-site)::before {
+  display: none;
+}
+
+.m-site {
+  --m-ease: cubic-bezier(0, 0, 0.2, 1);
+  --m-theme-ease: cubic-bezier(0, 0, 0.6, 1);
+  --m-indigo: #5266eb;
+  --m-indigo-hover: #6577ee;
+
+  --bg: #171721;
+  --fg: #ededf3;
+  --muted: #c3c3cc;
+  --rule: rgba(237, 237, 243, 0.16);
+  --rule-strong: #ededf3;
+  --tile: #1e1e2a;
+  --tile-2: #272735;
+  --pill: rgba(175, 178, 206, 0.2);
+  --pill-hover: rgba(175, 178, 206, 0.3);
+  --card: #272735;
+  --card-fg: #ededf3;
+  --card-muted: #c3c3cc;
+
+  font-family: var(--font-site), system-ui, sans-serif;
+  font-weight: 380;
+  background: var(--bg);
+  color: var(--fg);
+  transition:
+    background-color 0.5s var(--m-theme-ease),
+    color 0.5s var(--m-theme-ease);
+}
+.m-site[data-theme="warm"] {
+  --bg: #f6f5f2;
+  --fg: #2a2924;
+  --muted: #5a5548;
+  --rule: rgba(42, 41, 36, 0.16);
+  --rule-strong: #2a2924;
+  --tile: #eceae5;
+  --tile-2: #e2dfd8;
+  --pill: rgba(42, 41, 36, 0.08);
+  --pill-hover: rgba(42, 41, 36, 0.14);
+  --card: #ffffff;
+  --card-fg: #2a2924;
+  --card-muted: #5a5548;
+}
+.m-site[data-theme="cool"] {
+  --bg: #fbfcfd;
+  --fg: #272735;
+  --muted: #535461;
+  --rule: rgba(39, 39, 53, 0.14);
+  --rule-strong: #272735;
+  --tile: #e9eef3;
+  --tile-2: #d7e3e9;
+  --pill: rgba(39, 39, 53, 0.08);
+  --pill-hover: rgba(39, 39, 53, 0.14);
+  --card: #ffffff;
+  --card-fg: #272735;
+  --card-muted: #535461;
+}
+.m-site ::selection {
+  background: var(--m-indigo);
+  color: #fff;
+}
+
+/* Elements that carry a themed color follow the section change */
+.m-th {
+  transition:
+    background-color 0.5s var(--m-theme-ease),
+    border-color 0.5s var(--m-theme-ease),
+    color 0.5s var(--m-theme-ease);
+}
+
+.m-wrap {
+  width: 100%;
+  max-width: 1072px;
+  margin-inline: auto;
+  padding-inline: 24px;
+}
+
+.m-h1 {
+  font-size: clamp(28px, 3.43vw, 49.35px);
+  line-height: 1.1;
+  font-weight: 480;
+  letter-spacing: -0.012em;
+}
+.m-h2 {
+  font-size: clamp(26px, 2.92vw, 42px);
+  line-height: 1.15;
+  font-weight: 480;
+  letter-spacing: -0.008em;
+}
+.m-h3 {
+  font-size: clamp(21px, 1.95vw, 28px);
+  line-height: 1.2;
+  font-weight: 480;
+  letter-spacing: -0.004em;
+}
+.m-body {
+  font-size: 18px;
+  line-height: 1.35;
+  font-weight: 380;
+}
+.m-ui {
+  font-size: 16px;
+  line-height: 1.35;
+  font-weight: 480;
+}
+@media (max-width: 640px) {
+  .m-body {
+    font-size: 16px;
+    line-height: 1.4;
+  }
+}
+
+.m-btn {
+  display: inline-flex;
+  height: 40px;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  white-space: nowrap;
+  border-radius: 32px;
+  padding: 0 20px;
+  font-size: 16px;
+  line-height: 1;
+  font-weight: 440;
+  transition:
+    background-color 0.3s var(--m-ease),
+    color 0.3s var(--m-ease);
+}
+.m-btn-primary {
+  background: var(--m-indigo);
+  color: #fff;
+}
+.m-btn-primary:hover {
+  background: var(--m-indigo-hover);
+}
+.m-btn-secondary {
+  background: var(--pill);
+  color: var(--fg);
+}
+.m-btn-secondary:hover {
+  background: var(--pill-hover);
+}
+.m-btn:focus-visible,
+.m-focus:focus-visible {
+  outline: 2px solid var(--m-indigo);
+  outline-offset: 2px;
+}
+
+.m-input {
+  width: 100%;
+  height: 44px;
+  border-radius: 10px;
+  border: 1px solid var(--rule);
+  background: rgba(175, 178, 206, 0.08);
+  padding: 0 14px;
+  font-size: 16px;
+  color: var(--fg);
+  outline: none;
+  transition:
+    border-color 0.3s var(--m-ease),
+    background-color 0.3s var(--m-ease);
+}
+.m-input::placeholder {
+  color: rgba(195, 195, 204, 0.6);
+}
+.m-input:focus {
+  border-color: var(--m-indigo);
+  background: rgba(175, 178, 206, 0.12);
+}
+textarea.m-input {
+  height: auto;
+  padding: 12px 14px;
+  line-height: 1.4;
+}
+
+/* ---------- Tile illustrations ---------- */
+@keyframes m-step {
+  0% { opacity: 0; transform: translateY(8px); }
+  7% { opacity: 1; transform: none; }
+  84% { opacity: 1; transform: none; }
+  92%, 100% { opacity: 0; transform: none; }
+}
+@keyframes m-type {
+  0% { max-width: 0; }
+  28% { max-width: 100%; }
+  84% { max-width: 100%; }
+  92%, 100% { max-width: 0; }
+}
+@keyframes m-draw {
+  0% { transform: scaleX(0); }
+  14% { transform: scaleX(1); }
+  84% { transform: scaleX(1); opacity: 1; }
+  92%, 100% { transform: scaleX(1); opacity: 0; }
+}
+@keyframes m-ping {
+  0% { transform: scale(1); opacity: 0.55; }
+  70%, 100% { transform: scale(2.6); opacity: 0; }
+}
+@keyframes m-swap-out {
+  0%, 38% { opacity: 1; }
+  46%, 88% { opacity: 0; }
+  96%, 100% { opacity: 1; }
+}
+@keyframes m-swap-in {
+  0%, 38% { opacity: 0; }
+  46%, 88% { opacity: 1; }
+  96%, 100% { opacity: 0; }
+}
+@keyframes m-travel {
+  0% { offset-distance: 0%; opacity: 0; }
+  10% { opacity: 1; }
+  90% { opacity: 1; }
+  100% { offset-distance: 100%; opacity: 0; }
+}
+@keyframes m-progress {
+  from { transform: scaleX(0); }
+  to { transform: scaleX(1); }
+}
+.m-step {
+  animation: m-step 9s var(--m-ease) infinite backwards;
+}
+.m-type {
+  display: inline-block;
+  overflow: hidden;
+  white-space: nowrap;
+  vertical-align: bottom;
+  animation: m-type 9s steps(28, end) infinite backwards;
+}
+.m-draw {
+  transform-origin: left center;
+  animation: m-draw 9s var(--m-ease) infinite backwards;
+}
+.m-ping {
+  animation: m-ping 2.4s var(--m-ease) infinite;
+}
+.m-swap-out {
+  animation: m-swap-out 8s var(--m-ease) infinite;
+}
+.m-swap-in {
+  animation: m-swap-in 8s var(--m-ease) infinite;
+}
+[data-paused="true"] * {
+  animation-play-state: paused !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .m-step,
+  .m-type,
+  .m-draw,
+  .m-swap-in {
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+    max-width: none !important;
+  }
+  .m-swap-out,
+  .m-ping {
+    animation: none !important;
+    opacity: 0 !important;
+  }
+}

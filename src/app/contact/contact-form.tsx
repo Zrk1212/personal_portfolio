@@ -1,8 +1,7 @@
 "use client";
 
-import Link from "next/link";
-import { motion, useScroll, useTransform } from "framer-motion";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { SiteShell } from "@/components/site/shell";
 
 /* ----------------------------------------------------------------
    Web3Forms — set your access key here (or in NEXT_PUBLIC_WEB3FORMS_KEY).
@@ -12,24 +11,22 @@ import { useRef, useState } from "react";
 const ACCESS_KEY =
   process.env.NEXT_PUBLIC_WEB3FORMS_KEY ?? "YOUR_WEB3FORMS_ACCESS_KEY";
 
-const reveal = {
-  hidden: { opacity: 0, y: 26 },
-  show: (i = 0) => ({
-    opacity: 1,
-    y: 0,
-    transition: { duration: 0.7, delay: i * 0.08, ease: [0.16, 1, 0.3, 1] as const },
-  }),
-};
-
 type Status = "idle" | "sending" | "success" | "error";
 
 export default function ContactForm() {
-  const heroRef = useRef<HTMLElement>(null);
-  const { scrollYProgress } = useScroll({
-    target: heroRef,
-    offset: ["start start", "end start"],
-  });
-  const auroraY = useTransform(scrollYProgress, [0, 1], ["0%", "28%"]);
+  const emailRef = useRef<HTMLInputElement>(null);
+
+  // Carry over the email typed into the homepage hero, if any
+  useEffect(() => {
+    try {
+      const saved = sessionStorage.getItem("zk-email");
+      if (saved && emailRef.current && !emailRef.current.value) {
+        emailRef.current.value = saved;
+      }
+    } catch {
+      // Storage unavailable: start empty.
+    }
+  }, []);
 
   const [status, setStatus] = useState<Status>("idle");
   const [error, setError] = useState<string>("");
@@ -84,268 +81,172 @@ export default function ContactForm() {
   }
 
   return (
-    <div className="relative z-[2] w-full">
-      {/* ---------------- Nav ---------------- */}
-      <motion.header
-        initial={{ y: -24, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
-        className="fixed inset-x-0 top-4 z-50 px-4 sm:top-6 sm:px-6"
-      >
-        <nav className="glass-strong mx-auto flex max-w-6xl items-center justify-between rounded-full py-2.5 pl-5 pr-2.5">
-          <Link
-            href="/"
-            className="font-[family-name:var(--font-display)] text-lg font-semibold tracking-tight text-[var(--color-bone)]"
-          >
-            Zac Klein
-          </Link>
-          <div className="hidden items-center gap-8 sm:flex">
-            <Link
-              href="/#learn"
-              className="text-sm text-[var(--color-mist)] transition-colors hover:text-[var(--color-bone)]"
-            >
-              Learn
-            </Link>
-            <Link
-              href="/#process"
-              className="text-sm text-[var(--color-mist)] transition-colors hover:text-[var(--color-bone)]"
-            >
-              Sessions
-            </Link>
-            <Link
-              href="/#pricing"
-              className="text-sm text-[var(--color-mist)] transition-colors hover:text-[var(--color-bone)]"
-            >
-              Pricing
-            </Link>
-          </div>
-          <Link
-            href="/"
-            className="rounded-full bg-[var(--color-bone)] px-5 py-2.5 text-sm font-semibold text-[#0a0a0a] transition-transform duration-300 hover:scale-[1.04]"
-          >
-            Back home
-          </Link>
-        </nav>
-      </motion.header>
-
-      {/* ---------------- Contact ---------------- */}
-      <section
-        ref={heroRef}
-        className="relative flex min-h-[100svh] flex-col justify-center overflow-hidden px-6 pt-32 pb-24 sm:px-10"
-      >
-        {/* Aurora field */}
-        <motion.div
-          style={{ y: auroraY }}
-          className="pointer-events-none absolute inset-0 -z-10"
-          aria-hidden
-        >
-          <div className="animate-drift absolute -top-40 -left-20 h-[42rem] w-[42rem] rounded-full bg-[var(--color-violet)] opacity-[0.22] blur-[120px]" />
-          <div className="animate-drift-slow absolute top-10 right-[-10rem] h-[38rem] w-[38rem] rounded-full bg-[var(--color-lime)] opacity-[0.16] blur-[130px]" />
-          <div className="animate-drift absolute bottom-[-12rem] left-1/3 h-[34rem] w-[34rem] rounded-full bg-[var(--color-teal)] opacity-[0.14] blur-[140px]" />
-        </motion.div>
-        <div className="dotgrid pointer-events-none absolute inset-0 -z-10 opacity-40 [mask-image:radial-gradient(ellipse_at_center,black,transparent_72%)]" />
-
-        <div className="mx-auto grid w-full max-w-6xl gap-14 lg:grid-cols-[0.95fr_1.05fr] lg:items-center">
-          {/* Left: pitch */}
-          <motion.div
-            variants={reveal}
-            initial="hidden"
-            animate="show"
-            custom={0}
-          >
-            <p className="font-[family-name:var(--font-mono)] text-sm uppercase tracking-[0.2em] text-[var(--color-lime)]">
-              Get in touch
-            </p>
-            <h1 className="mt-6 max-w-xl font-[family-name:var(--font-display)] text-[clamp(2.4rem,6vw,4.4rem)] font-semibold leading-[1.02] tracking-tight text-[var(--color-bone)]">
-              Tell me about your <span className="text-gradient italic">student</span>.
-            </h1>
-            <p className="mt-7 max-w-md text-lg leading-8 text-[var(--color-mist)]">
-              Share a few details and I&apos;ll get back to you within a day to
-              set up a first session. No pressure, and no app idea needed yet.
-            </p>
-            <div className="mt-9 space-y-4">
-              <a
-                href="mailto:zacklein555@gmail.com"
-                className="group flex items-center gap-3 text-[var(--color-bone)]"
-              >
-                <span className="glass flex h-10 w-10 items-center justify-center rounded-full text-[var(--color-lime)]">
-                  &#9993;
-                </span>
-                <span className="text-[15px] text-[var(--color-mist)] transition-colors group-hover:text-[var(--color-bone)]">
-                  zacklein555@gmail.com
-                </span>
-              </a>
-              <a
-                href="https://github.com/Zrk1212"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="group flex items-center gap-3 text-[var(--color-bone)]"
-              >
-                <span className="glass flex h-10 w-10 items-center justify-center rounded-full text-[var(--color-lime)] font-[family-name:var(--font-mono)]">
-                  &lt;/&gt;
-                </span>
-                <span className="text-[15px] text-[var(--color-mist)] transition-colors group-hover:text-[var(--color-bone)]">
-                  github.com/Zrk1212
-                </span>
-              </a>
+    <SiteShell>
+      <main>
+        <section data-section-theme="dark" className="pb-12 pt-[136px] sm:pt-[168px]">
+          <div className="m-wrap grid gap-12 lg:grid-cols-[minmax(0,0.85fr)_minmax(0,1fr)] lg:gap-16">
+            {/* Left: pitch */}
+            <div>
+              <h1 className="m-h1 max-w-[440px] text-balance">Tell me about your student</h1>
+              <p className="m-body mt-5 max-w-[420px]" style={{ color: "var(--muted)" }}>
+                Share a few details and I&apos;ll get back to you within a day
+                to set up a first session. No pressure, and no app idea needed
+                yet.
+              </p>
+              <div className="mt-10 max-w-[420px]">
+                {[
+                  ["Email", "zacklein555@gmail.com", "mailto:zacklein555@gmail.com"],
+                  ["GitHub", "github.com/Zrk1212", "https://github.com/Zrk1212"],
+                  ["Where", "Chappaqua and Westchester, or Zoom", ""],
+                ].map(([label, value, href]) => (
+                  <div
+                    key={label}
+                    className="flex items-baseline justify-between gap-6 border-t py-4 text-[16px]"
+                    style={{ borderColor: "var(--rule)" }}
+                  >
+                    <span style={{ color: "var(--muted)" }}>{label}</span>
+                    {href ? (
+                      <a
+                        href={href}
+                        {...(href.startsWith("http")
+                          ? { target: "_blank", rel: "noopener noreferrer" }
+                          : {})}
+                        className="m-focus rounded font-[440] underline decoration-[color-mix(in_srgb,currentColor_40%,transparent)] underline-offset-4 hover:decoration-current"
+                      >
+                        {value}
+                      </a>
+                    ) : (
+                      <span className="text-right font-[440]">{value}</span>
+                    )}
+                  </div>
+                ))}
+              </div>
             </div>
-          </motion.div>
 
-          {/* Right: form card */}
-          <motion.div
-            variants={reveal}
-            initial="hidden"
-            animate="show"
-            custom={1}
-            className="glass-strong relative overflow-hidden rounded-[var(--radius-glass)] p-7 sm:p-10"
-          >
-            <div className="animate-drift-slow pointer-events-none absolute -top-24 -right-24 h-64 w-64 rounded-full bg-[var(--color-lime)] opacity-20 blur-[100px]" />
-
-            {status === "success" ? (
-              <motion.div
-                initial={{ opacity: 0, y: 12 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-                className="relative flex min-h-[22rem] flex-col items-center justify-center text-center"
-              >
-                <div className="flex h-16 w-16 items-center justify-center rounded-full bg-[var(--color-lime)] text-2xl text-[#0a0a0a]">
-                  &#10003;
+            {/* Right: form card */}
+            <div className="rounded-xl p-6 sm:p-8" style={{ backgroundColor: "var(--tile)" }}>
+              {status === "success" ? (
+                <div className="flex min-h-[22rem] flex-col items-center justify-center text-center">
+                  <div className="flex h-14 w-14 items-center justify-center rounded-full bg-[var(--m-indigo)] text-[22px] text-white">
+                    &#10003;
+                  </div>
+                  <h2 className="m-h3 mt-6">Message sent.</h2>
+                  <p className="m-body mt-3 max-w-[340px]" style={{ color: "var(--muted)" }}>
+                    Thanks for reaching out. I&apos;ll get back to you within a
+                    day, usually sooner.
+                  </p>
+                  <button
+                    type="button"
+                    onClick={() => setStatus("idle")}
+                    className="m-btn m-btn-secondary mt-8"
+                  >
+                    Send another
+                  </button>
                 </div>
-                <h2 className="mt-6 font-[family-name:var(--font-display)] text-3xl font-medium text-[var(--color-bone)]">
-                  Message sent.
-                </h2>
-                <p className="mt-3 max-w-sm text-[15px] leading-7 text-[var(--color-mist)]">
-                  Thanks for reaching out. I&apos;ll get back to you within a day,
-                  usually sooner.
-                </p>
-                <button
-                  type="button"
-                  onClick={() => setStatus("idle")}
-                  className="glass mt-8 inline-flex h-11 items-center justify-center rounded-full px-6 text-sm font-medium text-[var(--color-bone)] transition-colors hover:border-[var(--color-hair-strong)]"
-                >
-                  Send another
-                </button>
-              </motion.div>
-            ) : (
-              <form onSubmit={onSubmit} className="relative space-y-5">
-                {/* Honeypot */}
-                <input
-                  type="checkbox"
-                  name="botcheck"
-                  className="hidden"
-                  tabIndex={-1}
-                  autoComplete="off"
-                />
-
-                <Field label="Name">
+              ) : (
+                <form onSubmit={onSubmit} className="space-y-5">
+                  {/* Honeypot */}
                   <input
-                    name="name"
-                    type="text"
-                    required
-                    autoComplete="name"
-                    placeholder="Your name"
-                    className={inputClass}
+                    type="checkbox"
+                    name="botcheck"
+                    className="hidden"
+                    tabIndex={-1}
+                    autoComplete="off"
                   />
-                </Field>
 
-                <Field label="Email">
-                  <input
-                    name="email"
-                    type="email"
-                    required
-                    autoComplete="email"
-                    placeholder="you@email.com"
-                    className={inputClass}
-                  />
-                </Field>
-
-                <div className="space-y-5">
-                  <Field label="Student's grade">
-                    <Select
-                      name="grade"
-                      options={[
-                        ["9", "9th"],
-                        ["10", "10th"],
-                        ["11", "11th"],
-                        ["12", "12th"],
-                      ]}
+                  <Field label="Name">
+                    <input
+                      name="name"
+                      type="text"
+                      required
+                      autoComplete="name"
+                      placeholder="Your name"
+                      className="m-input"
                     />
                   </Field>
 
-                  <Field label="Web app or iOS app?">
-                    <Select
-                      name="app_type"
-                      options={[
-                        ["Web app", "Web app"],
-                        ["iOS app", "iOS app"],
-                        ["Not sure yet", "Not sure yet"],
-                      ]}
+                  <Field label="Email">
+                    <input
+                      ref={emailRef}
+                      name="email"
+                      type="email"
+                      required
+                      autoComplete="email"
+                      placeholder="you@email.com"
+                      className="m-input"
                     />
                   </Field>
 
-                  <Field label="In person or Zoom?">
-                    <Select
-                      name="format"
-                      options={[
-                        ["In person", "In person"],
-                        ["Zoom", "Zoom"],
-                        ["Either", "Either"],
-                      ]}
+                  <div className="grid gap-5 sm:grid-cols-3">
+                    <Field label="Student's grade">
+                      <Select
+                        name="grade"
+                        options={[
+                          ["9", "9th"],
+                          ["10", "10th"],
+                          ["11", "11th"],
+                          ["12", "12th"],
+                        ]}
+                      />
+                    </Field>
+
+                    <Field label="Web app or iOS app?">
+                      <Select
+                        name="app_type"
+                        options={[
+                          ["Web app", "Web app"],
+                          ["iOS app", "iOS app"],
+                          ["Not sure yet", "Not sure yet"],
+                        ]}
+                      />
+                    </Field>
+
+                    <Field label="In person or Zoom?">
+                      <Select
+                        name="format"
+                        options={[
+                          ["In person", "In person"],
+                          ["Zoom", "Zoom"],
+                          ["Either", "Either"],
+                        ]}
+                      />
+                    </Field>
+                  </div>
+
+                  <Field label="What is your student interested in, and do they have an app idea yet?">
+                    <textarea
+                      name="message"
+                      required
+                      rows={5}
+                      placeholder="A few sentences is plenty. It's fine if there's no idea yet."
+                      className="m-input resize-none"
                     />
                   </Field>
-                </div>
 
-                <Field label="What is your student interested in, and do they have an app idea yet?">
-                  <textarea
-                    name="message"
-                    required
-                    rows={5}
-                    placeholder="A few sentences is plenty. It's fine if there's no idea yet."
-                    className={`${inputClass} resize-none`}
-                  />
-                </Field>
+                  {status === "error" && (
+                    <p className="text-[14px] text-[#f0a35e]">{error}</p>
+                  )}
 
-                {status === "error" && (
-                  <p className="text-sm text-[var(--color-amber)]">{error}</p>
-                )}
+                  <button
+                    type="submit"
+                    disabled={status === "sending"}
+                    className="m-btn m-btn-primary w-full disabled:cursor-not-allowed disabled:opacity-70"
+                  >
+                    {status === "sending" ? "Sending…" : "Send message"}
+                  </button>
 
-                <button
-                  type="submit"
-                  disabled={status === "sending"}
-                  className="shine inline-flex h-[3.25rem] w-full items-center justify-center rounded-full bg-[var(--color-lime)] px-8 text-base font-semibold text-[#0a0a0a] transition-transform duration-300 hover:scale-[1.02] disabled:cursor-not-allowed disabled:opacity-70 disabled:hover:scale-100"
-                >
-                  {status === "sending" ? "Sending…" : "Send message"}
-                </button>
-
-                <p className="text-center text-xs text-[var(--color-faint)]">
-                  Goes straight to my inbox. I never share your details.
-                </p>
-              </form>
-            )}
-          </motion.div>
-        </div>
-      </section>
-
-      {/* ---------------- Footer ---------------- */}
-      <footer className="relative border-t border-[var(--color-hair)] px-6 py-12 sm:px-10">
-        <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-4 sm:flex-row">
-          <Link
-            href="/"
-            className="font-[family-name:var(--font-display)] text-lg font-medium text-[var(--color-bone)]"
-          >
-            Zac Klein
-          </Link>
-          <p className="text-sm text-[var(--color-faint)]">
-            Designed and built by Zac Klein.
-          </p>
-        </div>
-      </footer>
-    </div>
+                  <p className="text-center text-[13px]" style={{ color: "var(--muted)" }}>
+                    Goes straight to my inbox. I never share your details.
+                  </p>
+                </form>
+              )}
+            </div>
+          </div>
+        </section>
+      </main>
+    </SiteShell>
   );
 }
-
-const inputClass =
-  "w-full rounded-2xl border border-[var(--color-hair)] bg-white/[0.03] px-4 py-3 text-[15px] text-[var(--color-bone)] placeholder:text-[var(--color-faint)] transition-colors outline-none focus:border-[var(--color-lime)] focus:bg-white/[0.05]";
 
 function Select({
   name,
@@ -360,20 +261,21 @@ function Select({
         name={name}
         required
         defaultValue=""
-        className={`${inputClass} appearance-none pr-10 [&:invalid]:text-[var(--color-faint)]`}
+        className="m-input appearance-none pr-9 [&:invalid]:text-[rgba(195,195,204,0.6)]"
       >
         <option value="" disabled>
           Choose
         </option>
         {options.map(([value, label]) => (
-          <option key={value} value={value} className="bg-[var(--color-panel)] text-[var(--color-bone)]">
+          <option key={value} value={value} className="bg-[#272735] text-[#ededf3]">
             {label}
           </option>
         ))}
       </select>
       <span
         aria-hidden
-        className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-xs text-[var(--color-faint)]"
+        className="pointer-events-none absolute right-3.5 top-1/2 -translate-y-1/2 text-[11px]"
+        style={{ color: "var(--muted)" }}
       >
         &#9662;
       </span>
@@ -383,24 +285,17 @@ function Select({
 
 function Field({
   label,
-  optional,
   children,
 }: {
   label: string;
-  optional?: boolean;
   children: React.ReactNode;
 }) {
   return (
-    <label className="block">
-      <span className="mb-2 flex items-center gap-2 text-sm font-medium text-[var(--color-mist)]">
+    <label className="flex h-full flex-col">
+      <span className="mb-2 block text-[14px] font-[440]" style={{ color: "var(--muted)" }}>
         {label}
-        {optional && (
-          <span className="font-[family-name:var(--font-mono)] text-xs text-[var(--color-faint)]">
-            optional
-          </span>
-        )}
       </span>
-      {children}
+      <span className="mt-auto block">{children}</span>
     </label>
   );
 }
