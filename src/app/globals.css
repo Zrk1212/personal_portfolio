@@ -194,6 +194,7 @@ body {
 
 body:has(.m-site) {
   background: #171721;
+  font-family: var(--font-site), system-ui, sans-serif;
 }
 body:has(.m-site)::before {
   display: none;
@@ -456,5 +457,188 @@ textarea.m-input {
   .m-ping {
     animation: none !important;
     opacity: 0 !important;
+  }
+}
+
+/* ---------- Tutoring site: page canvas, scrollbar, first paint ---------- */
+body:has(.m-site) {
+  transition: background-color 0.5s cubic-bezier(0, 0, 0.6, 1);
+}
+html:has(.m-site)::-webkit-scrollbar-track,
+html:has(.m-site) ::-webkit-scrollbar-track {
+  background: transparent;
+}
+html:has(.m-site)::-webkit-scrollbar-thumb,
+html:has(.m-site) ::-webkit-scrollbar-thumb {
+  background: rgba(128, 128, 142, 0.55);
+  border: 2px solid transparent;
+  background-clip: padding-box;
+}
+html:has(.m-site)::-webkit-scrollbar-thumb:hover,
+html:has(.m-site) ::-webkit-scrollbar-thumb:hover {
+  background: rgba(128, 128, 142, 0.8);
+  background-clip: padding-box;
+}
+/* No theme animation until the page has settled (reloads mid-page, back button) */
+.m-site:not([data-ready]),
+.m-site:not([data-ready]) .m-th {
+  transition: none !important;
+}
+
+/* Browser autofill keeps the dark field instead of a white or yellow box */
+.m-input:-webkit-autofill,
+.m-input:-webkit-autofill:hover,
+.m-input:-webkit-autofill:focus {
+  -webkit-text-fill-color: #ededf3;
+  caret-color: #ededf3;
+  box-shadow: 0 0 0 1000px #262633 inset;
+  transition: background-color 99999s ease-out;
+}
+.m-hero-input:-webkit-autofill,
+.m-hero-input:-webkit-autofill:hover,
+.m-hero-input:-webkit-autofill:focus {
+  -webkit-text-fill-color: #ededf3;
+  caret-color: #ededf3;
+  transition: background-color 99999s ease-out;
+}
+
+/* ---------- Hero: headline block ---------- */
+.m-hero-copy {
+  padding-top: 124px;
+}
+@media (min-width: 640px) {
+  .m-hero-copy {
+    padding-top: 144px;
+  }
+}
+@media (max-height: 700px) {
+  .m-hero-copy {
+    padding-top: 104px;
+  }
+}
+@media (max-height: 520px) {
+  .m-hero-copy {
+    padding-top: 84px;
+  }
+  .m-hero-copy .m-hero-form {
+    margin-top: 16px;
+  }
+  .m-hero-note {
+    display: none;
+  }
+}
+/* Phones held sideways: one-line form, tighter text */
+@media (max-height: 480px) and (min-width: 500px) {
+  .m-hero-copy .m-hero-form {
+    flex-direction: row;
+    align-items: center;
+    margin-top: 14px;
+  }
+  .m-hero-copy .m-hero-sub {
+    font-size: 15px;
+    margin-top: 6px;
+    max-width: 500px;
+  }
+  .m-hero-copy .m-hero-input {
+    width: 130px;
+    flex: none;
+  }
+}
+@media (max-height: 360px) {
+  .m-hero-copy {
+    padding-top: 78px;
+  }
+}
+/* Very large monitors get a wider column and a larger headline */
+@media (min-width: 1800px) {
+  .m-wrap {
+    max-width: 1248px;
+  }
+  .m-h1 {
+    font-size: 58px;
+  }
+}
+
+/* ---------- Hero: docked layout (app list + panel) ---------- */
+.m-dock {
+  position: absolute;
+  inset: 0;
+  pointer-events: none; /* the column turns its own clicks on once docked */
+  display: flex;
+  align-items: flex-start;
+  padding-top: 88px;
+}
+.m-dock-grid {
+  display: grid;
+  align-items: center;
+  gap: 24px;
+}
+.m-dock-slot {
+  aspect-ratio: 16 / 10;
+  width: min(100%, 54svh);
+  margin-inline: auto;
+}
+/* Side by side on desktop, and on phones held sideways */
+@media (min-width: 1024px),
+  (orientation: landscape) and (max-height: 560px) and (min-width: 480px) {
+  .m-dock {
+    align-items: center;
+    padding-top: 72px;
+  }
+  .m-dock-grid {
+    grid-template-columns: minmax(0, 0.85fr) minmax(0, 1fr);
+    gap: 64px;
+  }
+  .m-dock-slot {
+    order: 2;
+    width: 100%;
+  }
+  .m-dock-col {
+    order: 1;
+  }
+}
+/* Shorter screens drop the extras first, then the descriptions */
+@media (max-height: 690px) {
+  .m-dock .m-hide-short {
+    display: none;
+  }
+}
+@media (max-height: 570px) {
+  .m-dock .m-hide-shorter {
+    display: none;
+  }
+  .m-dock .m-dock-blurb {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    overflow: hidden;
+  }
+}
+@media (max-height: 490px), (max-width: 1023px) and (max-height: 740px) {
+  .m-dock .m-tab-body {
+    display: none;
+  }
+  .m-dock .m-dock-tabs {
+    margin-top: 16px;
+  }
+}
+@media (max-height: 490px), (max-width: 1023px) and (max-height: 610px) {
+  .m-dock .m-tab-btn {
+    padding-top: 9px;
+    padding-bottom: 0;
+  }
+  .m-dock .m-tab-gap {
+    height: 8px;
+  }
+  .m-dock .m-dock-title {
+    font-size: 19px;
+  }
+  .m-dock-grid {
+    gap: 16px;
+  }
+}
+@media (orientation: landscape) and (max-height: 560px) and (min-width: 480px) and (max-width: 1023px) {
+  .m-dock-grid {
+    gap: 32px;
   }
 }

@@ -1,8 +1,13 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import ContactForm from "./contact-form";
+
+export const viewport: Viewport = {
+  themeColor: "#171721",
+};
 
 export const metadata: Metadata = {
   title: "Book a session · Zac Klein",
+  alternates: { canonical: "/contact" },
   description:
     "Book a one-on-one session where your high schooler builds a real web or iOS app with AI. Tell me about your student and I'll get back to you within a day.",
   openGraph: {
@@ -10,6 +15,14 @@ export const metadata: Metadata = {
     description:
       "Book a one-on-one session where your high schooler builds a real web or iOS app with AI. Tell me about your student and I'll get back to you within a day.",
     type: "website",
+    url: "/contact",
+    siteName: "Zac Klein",
+    images: [{ url: "/og.jpg", width: 1200, height: 630, alt: "Book a session with Zac Klein" }],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Book a session · Zac Klein",
+    images: ["/og.jpg"],
   },
 };
 

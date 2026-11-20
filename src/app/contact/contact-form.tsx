@@ -47,6 +47,12 @@ export default function ContactForm() {
       return;
     }
 
+    // Give up after 15 seconds so the button never spins forever
+    const controller = new AbortController();
+    const timer = window.setTimeout(() => controller.abort(), 15000);
+    const fallback =
+      "That didn't go through. Please try again, or email me at zacklein555@gmail.com.";
+
     try {
       const res = await fetch("https://api.web3forms.com/submit", {
         method: "POST",
@@ -54,6 +60,7 @@ export default function ContactForm() {
           "Content-Type": "application/json",
           Accept: "application/json",
         },
+        signal: controller.signal,
         body: JSON.stringify({
           access_key: ACCESS_KEY,
           subject: `New tutoring inquiry from ${data.name || "your site"}`,
@@ -66,23 +73,33 @@ export default function ContactForm() {
           message: data.message,
         }),
       });
-      const json = await res.json();
-      if (res.ok && json.success) {
+      // The form service can answer with a non-JSON error page
+      const json = await res.json().catch(() => null);
+      if (res.ok && json?.success) {
         setStatus("success");
         form.reset();
+        try {
+          sessionStorage.removeItem("zk-email");
+        } catch {
+          // Storage unavailable: nothing to clear.
+        }
       } else {
         setStatus("error");
-        setError(json.message || "Something went wrong. Please try again.");
+        setError(json?.message ? `${json.message}. ${fallback}` : fallback);
       }
     } catch {
       setStatus("error");
-      setError("Network error. Please check your connection and try again.");
+      setError(
+        "Network error. Check your connection and try again, or email me at zacklein555@gmail.com."
+      );
+    } finally {
+      window.clearTimeout(timer);
     }
   }
 
   return (
     <SiteShell>
-      <main>
+      <main id="main">
         <section data-section-theme="dark" className="pb-12 pt-[136px] sm:pt-[168px]">
           <div className="m-wrap grid gap-12 lg:grid-cols-[minmax(0,0.85fr)_minmax(0,1fr)] lg:gap-16">
             {/* Left: pitch */}
@@ -126,8 +143,14 @@ export default function ContactForm() {
             {/* Right: form card */}
             <div className="rounded-xl p-6 sm:p-8" style={{ backgroundColor: "var(--tile)" }}>
               {status === "success" ? (
-                <div className="flex min-h-[22rem] flex-col items-center justify-center text-center">
-                  <div className="flex h-14 w-14 items-center justify-center rounded-full bg-[var(--m-indigo)] text-[22px] text-white">
+                <div
+                  role="status"
+                  className="flex min-h-[22rem] flex-col items-center justify-center text-center"
+                >
+                  <div
+                    aria-hidden
+                    className="flex h-14 w-14 items-center justify-center rounded-full bg-[var(--m-indigo)] text-[22px] text-white"
+                  >
                     &#10003;
                   </div>
                   <h2 className="m-h3 mt-6">Message sent.</h2>
@@ -223,9 +246,9 @@ export default function ContactForm() {
                     />
                   </Field>
 
-                  {status === "error" && (
-                    <p className="text-[14px] text-[#f0a35e]">{error}</p>
-                  )}
+                  <p role="alert" className="text-[14px] leading-[1.4] text-[#f5b27a] empty:hidden">
+                    {status === "error" ? error : ""}
+                  </p>
 
                   <button
                     type="submit"
@@ -272,13 +295,14 @@ function Select({
           </option>
         ))}
       </select>
-      <span
+      <svg
         aria-hidden
-        className="pointer-events-none absolute right-3.5 top-1/2 -translate-y-1/2 text-[11px]"
+        viewBox="0 0 12 12"
+        className="pointer-events-none absolute right-3.5 top-1/2 h-3 w-3 -translate-y-1/2"
         style={{ color: "var(--muted)" }}
       >
-        &#9662;
-      </span>
+        <path d="M2.5 4.5 6 8l3.5-3.5" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+      </svg>
     </div>
   );
 }

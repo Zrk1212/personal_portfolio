@@ -133,7 +133,7 @@ function SkillArt() {
       <div className="flex items-center justify-between">
         <span className="text-[15px] font-[480]">Write like me</span>
         <span
-          className="m-step rounded-full bg-[rgba(82,102,235,0.14)] px-2.5 py-1 text-[12px] text-[var(--m-indigo)]"
+          className="m-step rounded-full bg-[var(--m-indigo)] px-2.5 py-1 text-[12px] font-[480] text-white"
           style={delay(3.2)}
         >
           Saved
@@ -220,7 +220,7 @@ function Tile({ skill, alt }: { skill: (typeof SKILLS)[number]; alt: boolean }) 
         <button
           type="button"
           onClick={() => setPaused((v) => !v)}
-          aria-label={paused ? `Play the ${skill.title} animation` : `Pause the ${skill.title} animation`}
+          aria-label={`${paused ? "Play" : "Pause"} animation: ${skill.title}`}
           className="m-focus m-th absolute bottom-3 left-3 flex h-9 w-9 items-center justify-center rounded-full border border-[var(--rule)] bg-[var(--bg)] text-[var(--fg)] motion-reduce:hidden"
         >
           {paused ? (

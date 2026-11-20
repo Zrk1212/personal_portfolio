@@ -1,9 +1,16 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useId, useRef, useState } from "react";
 
 type Theme = "dark" | "warm" | "cool";
+
+// Page canvas per theme, so overscroll and the scrollbar track match the section
+const CANVAS: Record<Theme, string> = {
+  dark: "#171721",
+  warm: "#f6f5f2",
+  cool: "#fbfcfd",
+};
 
 const LINKS = [
   ["Work", "#work"],
@@ -26,6 +33,19 @@ export function SiteShell({
   const ref = useRef<HTMLDivElement>(null);
   const [theme, setTheme] = useState<Theme>("dark");
   const [atTop, setAtTop] = useState(true);
+  const [ready, setReady] = useState(false);
+
+  useEffect(() => {
+    document.body.style.backgroundColor = CANVAS[theme];
+  }, [theme]);
+  useEffect(() => {
+    // Theme changes animate only after the first paint has settled
+    const t = window.setTimeout(() => setReady(true), 120);
+    return () => {
+      window.clearTimeout(t);
+      document.body.style.backgroundColor = "";
+    };
+  }, []);
 
   useEffect(() => {
     const el = ref.current;
@@ -57,7 +77,18 @@ export function SiteShell({
   }, []);
 
   return (
-    <div ref={ref} className="m-site relative w-full" data-theme={theme}>
+    <div
+      ref={ref}
+      className="m-site relative w-full"
+      data-theme={theme}
+      data-ready={ready ? "" : undefined}
+    >
+      <a
+        href="#main"
+        className="m-btn m-btn-primary fixed left-4 top-4 z-[60] -translate-y-24 opacity-0 focus:translate-y-0 focus:opacity-100"
+      >
+        Skip to content
+      </a>
       <Nav home={home} clear={home && atTop} />
       {children}
       <Footer home={home} />
@@ -69,6 +100,18 @@ function Nav({ home, clear }: { home: boolean; clear: boolean }) {
   const [open, setOpen] = useState(false);
   const prefix = home ? "" : "/";
 
+  useEffect(() => {
+    if (!open) return;
+    const onKey = (e: KeyboardEvent) => e.key === "Escape" && setOpen(false);
+    const onResize = () => window.innerWidth >= 768 && setOpen(false);
+    window.addEventListener("keydown", onKey);
+    window.addEventListener("resize", onResize);
+    return () => {
+      window.removeEventListener("keydown", onKey);
+      window.removeEventListener("resize", onResize);
+    };
+  }, [open]);
+
   return (
     <header
       className="m-th fixed inset-x-0 top-0 z-50 border-b"
@@ -76,12 +119,14 @@ function Nav({ home, clear }: { home: boolean; clear: boolean }) {
         backgroundColor: clear && !open ? "transparent" : "var(--bg)",
         borderColor: clear && !open ? "transparent" : "var(--rule)",
         color: clear ? "#ededf3" : "var(--fg)",
+        // The open menu needs a solid backdrop right away, not a half-second fade
+        transition: open ? "none" : undefined,
       }}
     >
-      <nav className="flex h-[72px] items-center justify-between gap-6 px-4 sm:px-8">
+      <nav className="flex h-[72px] items-center justify-between gap-3 px-4 sm:gap-6 sm:px-8">
         <Link
           href={home ? "#top" : "/"}
-          className="m-focus rounded text-[15px] font-[520] tracking-[0.2em]"
+          className="m-focus shrink-0 whitespace-nowrap rounded text-[15px] font-[520] tracking-[0.2em] max-[359px]:text-[13px] max-[359px]:tracking-[0.14em]"
         >
           ZAC KLEIN
         </Link>
@@ -101,7 +146,7 @@ function Nav({ home, clear }: { home: boolean; clear: boolean }) {
         <div className="flex items-center gap-2">
           <a
             href={`${prefix}#pricing`}
-            className={`m-btn m-btn-secondary !hidden !h-8 !px-4 !text-[14px] transition-opacity duration-300 md:!inline-flex ${
+            className={`m-btn m-btn-secondary !hidden !h-8 !px-4 !text-[14px] transition-opacity duration-300 lg:!inline-flex ${
               clear ? "pointer-events-none opacity-0" : "opacity-100"
             }`}
             tabIndex={clear ? -1 : 0}
@@ -110,7 +155,7 @@ function Nav({ home, clear }: { home: boolean; clear: boolean }) {
           </a>
           <Link
             href="/contact"
-            className="m-btn m-btn-primary !h-8 !px-4 !text-[14px]"
+            className="m-btn m-btn-primary !h-9 !px-4 !text-[14px] max-[359px]:!px-3 max-[359px]:!text-[13px] md:!h-8"
           >
             Book a session
           </Link>
@@ -119,7 +164,7 @@ function Nav({ home, clear }: { home: boolean; clear: boolean }) {
             aria-label={open ? "Close menu" : "Open menu"}
             aria-expanded={open}
             onClick={() => setOpen((v) => !v)}
-            className="m-focus -mr-1 flex h-10 w-10 flex-col items-center justify-center gap-[6px] rounded-full md:hidden"
+            className="m-focus -mr-2 flex h-11 w-11 flex-col items-center justify-center gap-[6px] rounded-full md:hidden"
           >
             <span
               className={`h-[1.5px] w-5 bg-current transition-transform duration-300 ${
@@ -136,7 +181,10 @@ function Nav({ home, clear }: { home: boolean; clear: boolean }) {
       </nav>
 
       {open && (
-        <div className="border-t px-4 pb-6 pt-2 md:hidden" style={{ borderColor: "var(--rule)" }}>
+        <div
+          className="max-h-[calc(100svh-72px)] overflow-y-auto border-t px-4 pb-6 pt-2 md:hidden"
+          style={{ borderColor: "var(--rule)" }}
+        >
           {LINKS.map(([label, href]) => (
             <a
               key={href}
@@ -271,10 +319,44 @@ export function TabList({
   auto?: boolean;
   duration?: number;
 }) {
+  const id = useId();
+  const rootRef = useRef<HTMLDivElement>(null);
+
+  // Give every row's body the height of the tallest one, so switching rows
+  // (by hand or on the timer) never moves anything around it.
+  useEffect(() => {
+    const el = rootRef.current;
+    if (!el) return;
+    let lastWidth = -1;
+    function fit(force = false) {
+      if (!el) return;
+      const w = el.clientWidth;
+      if (!force && w === lastWidth) return;
+      lastWidth = w;
+      const bodies = el.querySelectorAll<HTMLElement>("[data-tab-inner]");
+      let max = 0;
+      bodies.forEach((b) => (b.style.minHeight = ""));
+      bodies.forEach((b) => (max = Math.max(max, b.offsetHeight)));
+      bodies.forEach((b) => (b.style.minHeight = max ? `${max}px` : ""));
+    }
+    fit(true);
+    const ro = new ResizeObserver(() => fit());
+    ro.observe(el);
+    const onResize = () => fit(true);
+    window.addEventListener("resize", onResize);
+    document.fonts?.ready.then(() => fit(true)).catch(() => {});
+    return () => {
+      ro.disconnect();
+      window.removeEventListener("resize", onResize);
+    };
+  }, [items.length]);
+
   return (
-    <div role="tablist" aria-orientation="vertical" className="group/tabs">
+    <div ref={rootRef} className="group/tabs">
       {items.map((item, i) => {
         const on = i === active;
+        const panelId = `${id}-panel-${i}`;
+        const btnId = `${id}-btn-${i}`;
         return (
           <div key={item.key} className="relative">
             <div
@@ -284,7 +366,7 @@ export function TabList({
             {on && (
               <div
                 key={`${item.key}-${auto}`}
-                className="absolute inset-x-0 top-0 h-px origin-left group-hover/tabs:[animation-play-state:paused]"
+                className="absolute inset-x-0 top-0 h-px origin-left group-hover/tabs:[animation-play-state:paused] group-focus-within/tabs:[animation-play-state:paused]"
                 style={{
                   backgroundColor: "var(--rule-strong)",
                   animation: auto
@@ -295,11 +377,12 @@ export function TabList({
               />
             )}
             <button
+              id={btnId}
               type="button"
-              role="tab"
-              aria-selected={on}
+              aria-expanded={on}
+              aria-controls={panelId}
               onClick={() => onSelect(i)}
-              className="m-focus relative block w-full rounded pb-1 pt-[14px] text-left"
+              className="m-tab-btn m-focus group/tab relative block w-full rounded pb-1 pt-[14px] text-left"
             >
               <span
                 className={`absolute -left-5 top-[22px] hidden h-[7px] w-[7px] rounded-full bg-current transition-opacity duration-300 xl:block ${
@@ -307,23 +390,29 @@ export function TabList({
                 }`}
               />
               <span
-                className="m-ui m-th block transition-colors duration-300"
-                style={{ color: on ? "var(--fg)" : "var(--muted)" }}
+                className={`m-ui block transition-colors duration-300 ${
+                  on
+                    ? "text-[var(--fg)]"
+                    : "text-[var(--muted)] group-hover/tab:text-[var(--fg)]"
+                }`}
               >
                 {item.title}
               </span>
             </button>
             <div
-              role="tabpanel"
-              className="grid transition-[grid-template-rows,opacity] duration-500 ease-[cubic-bezier(0,0,0.2,1)]"
+              id={panelId}
+              role="region"
+              aria-labelledby={btnId}
+              inert={!on}
+              className="m-tab-body grid transition-[grid-template-rows,opacity] duration-500 ease-[cubic-bezier(0,0,0.2,1)]"
               style={{
                 gridTemplateRows: on ? "1fr" : "0fr",
                 opacity: on ? 1 : 0,
               }}
-              aria-hidden={!on}
             >
               <div className="overflow-hidden">
                 <div
+                  data-tab-inner
                   className="m-th max-w-[440px] pb-3 text-[16px] leading-[1.4]"
                   style={{ color: "var(--muted)" }}
                 >
@@ -331,7 +420,7 @@ export function TabList({
                 </div>
               </div>
             </div>
-            <div className="h-[10px]" />
+            <div className="m-tab-gap h-[10px]" />
           </div>
         );
       })}

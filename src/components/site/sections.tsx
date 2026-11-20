@@ -2,8 +2,9 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useId, useRef, useState } from "react";
 import { FAQ, PRICING, PROCESS } from "@/app/content";
+import zacPhoto from "../../../public/about/zac.jpg";
 import { TabList, usePrefersReducedMotion } from "./shell";
 
 /* ---------------- How the 4 sessions go ---------------- */
@@ -52,7 +53,7 @@ export function Sessions() {
                 key: s.no,
                 title: (
                   <>
-                    <span className="mr-3 font-[family-name:var(--font-geist-mono)] text-[13px] opacity-60">
+                    <span className="m-th mr-3 font-[family-name:var(--font-geist-mono)] text-[13px] font-[400] text-[var(--muted)]">
                       {s.no}
                     </span>
                     {s.title}
@@ -83,9 +84,13 @@ export function Sessions() {
           {PROCESS.map((s, i) => {
             const on = i === active;
             const top = 14 + (i / (PROCESS.length - 1)) * 72;
+            const right = i % 2 === 0; // cards alternate sides of the line
             return (
-              <div key={s.no} className="absolute left-1/2" style={{ top: `${top}%` }}>
-                <div className="absolute -left-[5px] -top-[5px] h-[10px] w-[10px]">
+              <div key={s.no}>
+                <div
+                  className="absolute left-1/2 h-[10px] w-[10px] -translate-x-1/2 -translate-y-1/2"
+                  style={{ top: `${top}%` }}
+                >
                   {on && <span className="m-ping absolute inset-0 rounded-full bg-white" />}
                   <span
                     className="absolute inset-0 rounded-full transition-colors duration-500"
@@ -93,17 +98,26 @@ export function Sessions() {
                   />
                 </div>
                 <div
-                  className={`absolute top-0 w-[min(200px,34vw)] rounded-xl bg-[#171721]/85 px-4 py-3 backdrop-blur-sm transition-[opacity,transform] duration-500 ease-[cubic-bezier(0,0,0.2,1)] ${
-                    i % 2 === 0 ? "left-6" : "right-6 text-right"
-                  }`}
+                  className={`absolute flex ${right ? "justify-start" : "justify-end"}`}
                   style={{
-                    opacity: on ? 1 : 0,
-                    transform: `translateY(-50%) translateX(${on ? 0 : i % 2 === 0 ? -8 : 8}px)`,
+                    top: `${top}%`,
+                    left: right ? "calc(50% + 20px)" : "12px",
+                    right: right ? "12px" : "calc(50% + 20px)",
                   }}
                   aria-hidden={!on}
                 >
-                  <div className="text-[12px] text-[#c3c3cc]">After session {i + 1}</div>
-                  <div className="mt-0.5 text-[15px] leading-[1.3]">{OUTCOMES[i]}</div>
+                  <div
+                    className={`w-full max-w-[200px] rounded-xl bg-[#171721]/85 px-4 py-3 backdrop-blur-sm transition-[opacity,transform] duration-500 ease-[cubic-bezier(0,0,0.2,1)] ${
+                      right ? "" : "text-right"
+                    }`}
+                    style={{
+                      opacity: on ? 1 : 0,
+                      transform: `translateY(-50%) translateX(${on ? 0 : right ? -8 : 8}px)`,
+                    }}
+                  >
+                    <div className="text-[12px] text-[#c3c3cc]">After session {i + 1}</div>
+                    <div className="mt-0.5 break-words text-[15px] leading-[1.3]">{OUTCOMES[i]}</div>
+                  </div>
                 </div>
               </div>
             );
@@ -148,7 +162,7 @@ export function Pricing() {
                 <div className="flex flex-wrap items-center justify-between gap-3">
                   <h3 className="m-h3">{track}</h3>
                   {featured && (
-                    <span className="rounded-full bg-[rgba(82,102,235,0.22)] px-3 py-1.5 text-[13px] font-[440] text-[#b4bdf8]">
+                    <span className="rounded-full bg-[var(--m-indigo)] px-3 py-1.5 text-[13px] font-[480] text-white">
                       Most students start here
                     </span>
                   )}
@@ -204,8 +218,9 @@ export function About() {
         >
           <div className="relative aspect-[4/5] w-full max-w-[400px] overflow-hidden rounded-xl bg-[var(--tile)]">
             <Image
-              src="/about/zac.jpg"
+              src={zacPhoto}
               alt="Zac Klein"
+              placeholder="blur"
               fill
               sizes="(max-width: 768px) 100vw, 400px"
               className="object-cover"
@@ -250,6 +265,7 @@ export function About() {
 
 export function Faq() {
   const [open, setOpen] = useState<number | null>(0);
+  const id = useId();
   return (
     <section id="faq" data-section-theme="dark" className="scroll-mt-[72px] py-24 sm:py-32">
       <div className="m-wrap grid gap-10 md:grid-cols-[minmax(0,0.8fr)_minmax(0,1fr)] md:gap-16">
@@ -263,15 +279,17 @@ export function Faq() {
               <div key={f.q} className="m-th border-t" style={{ borderColor: "var(--rule)" }}>
                 <h3>
                   <button
+                    id={`${id}-q-${i}`}
                     type="button"
                     aria-expanded={on}
+                    aria-controls={`${id}-a-${i}`}
                     onClick={() => setOpen(on ? null : i)}
-                    className="m-focus flex w-full items-center justify-between gap-6 rounded py-5 text-left"
+                    className="m-focus group flex w-full items-center justify-between gap-6 rounded py-5 text-left"
                   >
                     <span className="m-body !font-[480]">{f.q}</span>
                     <span
                       aria-hidden
-                      className={`relative h-3.5 w-3.5 shrink-0 transition-transform duration-300 ease-[cubic-bezier(0,0,0.2,1)] ${
+                      className={`relative h-3.5 w-3.5 shrink-0 opacity-70 transition-[transform,opacity] duration-300 ease-[cubic-bezier(0,0,0.2,1)] group-hover:opacity-100 ${
                         on ? "rotate-45" : ""
                       }`}
                     >
@@ -281,6 +299,10 @@ export function Faq() {
                   </button>
                 </h3>
                 <div
+                  id={`${id}-a-${i}`}
+                  role="region"
+                  aria-labelledby={`${id}-q-${i}`}
+                  inert={!on}
                   className="grid transition-[grid-template-rows,opacity] duration-500 ease-[cubic-bezier(0,0,0.2,1)]"
                   style={{ gridTemplateRows: on ? "1fr" : "0fr", opacity: on ? 1 : 0 }}
                 >
