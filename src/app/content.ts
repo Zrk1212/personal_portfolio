@@ -135,30 +135,40 @@ export const PROCESS = [
   },
 ];
 
-export type Price = {
-  track: string;
-  label: string;
-  price: string;
-  note?: string;
-  featured?: boolean;
+// Prices. iOS is double web at every length. A bundle is five sessions.
+export type PriceRow = {
+  length: string;
+  single: string;
+  bundle: string;
+  each: string; // per-session price inside the bundle
 };
 
-export const PRICING: Price[] = [
+export type PriceTrack = {
+  track: string;
+  blurb: string;
+  featured?: boolean;
+  rows: PriceRow[];
+};
+
+export const PRICING: PriceTrack[] = [
   {
     track: "Web app",
-    label: "4-session package",
-    price: "$500",
-    note: "$125 per session",
+    blurb: "A web app with a real link your student can share with anyone.",
     featured: true,
+    rows: [
+      { length: "30 minutes", single: "$60", bundle: "$250", each: "$50 each" },
+      { length: "1 hour", single: "$100", bundle: "$425", each: "$85 each" },
+    ],
   },
-  { track: "Web app", label: "Single session (1 hr)", price: "$150" },
   {
     track: "iOS app",
-    label: "4-session package",
-    price: "$1,000",
-    note: "$250 per session",
+    blurb:
+      "An iPhone app. iOS costs double because it adds Xcode, Apple's developer setup and the App Store / TestFlight process.",
+    rows: [
+      { length: "30 minutes", single: "$120", bundle: "$500", each: "$100 each" },
+      { length: "1 hour", single: "$200", bundle: "$850", each: "$170 each" },
+    ],
   },
-  { track: "iOS app", label: "Single session (1 hr)", price: "$300" },
 ];
 
 export const FAQ = [

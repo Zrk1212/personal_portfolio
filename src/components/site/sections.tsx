@@ -9,7 +9,7 @@ import { TabList, usePrefersReducedMotion } from "./shell";
 
 /* ---------------- How the 4 sessions go ---------------- */
 
-// What the student walks away with after each session
+// What the student walks away with after each step
 const OUTCOMES = ["plan.md", "A working first version", "An AI feature and one automation", "your-app.vercel.app"];
 
 export function Sessions() {
@@ -32,16 +32,16 @@ export function Sessions() {
       ref={ref}
       id="process"
       data-section-theme="cool"
-      className="scroll-mt-[72px] pb-28 pt-24 sm:pb-36 sm:pt-32"
+      className="scroll-mt-[72px] pb-24 pt-24 sm:pb-28 sm:pt-28"
     >
       <div className="m-wrap grid gap-10 md:grid-cols-2 md:gap-8">
         <div className="flex flex-col">
           <h2 className="m-h3 max-w-[440px] text-balance" style={{ fontSize: "clamp(24px, 2.3vw, 33px)" }}>
-            From idea to a live app in four sessions.
+            From idea to a live app in four steps.
           </h2>
           <p className="m-body m-th mt-4 max-w-[440px]" style={{ color: "var(--muted)" }}>
-            Each session is one hour, one-on-one. The last one ends with your
-            student showing you the finished app.
+            Sessions are one-on-one, 30 minutes or an hour. The last one ends
+            with your student showing you the finished app.
           </p>
           <div className="mt-10 md:mt-auto md:pt-16">
             <TabList
@@ -107,7 +107,7 @@ export function Sessions() {
                   aria-hidden={!on}
                 >
                   <div
-                    className={`w-full max-w-[200px] rounded-xl bg-[#171721]/85 px-4 py-3 backdrop-blur-sm transition-[opacity,transform] duration-500 ease-[cubic-bezier(0,0,0.2,1)] ${
+                    className={`w-full max-w-[200px] rounded-xl bg-[#171721]/90 px-4 py-3 transition-[opacity,transform] duration-500 ease-[cubic-bezier(0,0,0.2,1)] ${
                       right ? "" : "text-right"
                     }`}
                     style={{
@@ -115,7 +115,7 @@ export function Sessions() {
                       transform: `translateY(-50%) translateX(${on ? 0 : right ? -8 : 8}px)`,
                     }}
                   >
-                    <div className="text-[12px] text-[#c3c3cc]">After session {i + 1}</div>
+                    <div className="text-[12px] text-[#c3c3cc]">After step {i + 1}</div>
                     <div className="mt-0.5 break-words text-[15px] leading-[1.3]">{OUTCOMES[i]}</div>
                   </div>
                 </div>
@@ -131,76 +131,85 @@ export function Sessions() {
 /* ---------------- Pricing ---------------- */
 
 export function Pricing() {
-  const tracks = ["Web app", "iOS app"];
-  const blurbs: Record<string, string> = {
-    "Web app": "A web app with a real link your student can share with anyone.",
-    "iOS app":
-      "An iPhone app. iOS costs more because it adds Xcode, Apple's developer setup and the App Store / TestFlight process.",
-  };
-
   return (
-    <section id="pricing" data-section-theme="dark" className="scroll-mt-[72px] pb-20 pt-24 sm:pb-24 sm:pt-32">
+    <section id="pricing" data-section-theme="dark" className="scroll-mt-[72px] pb-14 pt-24 sm:pb-16 sm:pt-28">
       <div className="m-wrap">
         <h2 className="m-h2 mx-auto max-w-[620px] text-balance text-center">
-          Simple pricing, one hour at a time.
+          Simple pricing, by the session.
         </h2>
         <p className="m-body m-th mx-auto mt-5 max-w-[520px] text-center" style={{ color: "var(--muted)" }}>
           One session alone rarely gets to a live app, so most students start
-          with the four-session package.
+          with a bundle of five.
         </p>
 
         <div className="mt-14 grid gap-8 md:grid-cols-2">
-          {tracks.map((track) => {
-            const rows = PRICING.filter((p) => p.track === track);
-            const featured = rows.some((r) => r.featured);
-            return (
-              <div
-                key={track}
-                className="m-th flex flex-col rounded-xl p-7 sm:p-8"
-                style={{ backgroundColor: "var(--tile)" }}
-              >
-                <div className="flex flex-wrap items-center justify-between gap-3">
-                  <h3 className="m-h3">{track}</h3>
-                  {featured && (
-                    <span className="rounded-full bg-[var(--m-indigo)] px-3 py-1.5 text-[13px] font-[480] text-white">
-                      Most students start here
-                    </span>
-                  )}
-                </div>
-                <p className="m-body m-th mt-2 max-w-[420px]" style={{ color: "var(--muted)" }}>
-                  {blurbs[track]}
-                </p>
-
-                <dl className="mt-8">
-                  {rows.map((r) => (
-                    <div
-                      key={r.label}
-                      className="m-th flex items-baseline justify-between gap-4 border-t py-4"
-                      style={{ borderColor: "var(--rule)" }}
-                    >
-                      <dt className="text-[16px] font-[440]">
-                        {r.label}
-                        {r.note && (
-                          <span className="m-th block text-[14px] font-[380]" style={{ color: "var(--muted)" }}>
-                            {r.note}
-                          </span>
-                        )}
-                      </dt>
-                      <dd className="text-[32px] font-[480] leading-none tracking-[-0.01em]">{r.price}</dd>
-                    </div>
-                  ))}
-                </dl>
-
-                <Link
-                  href="/contact"
-                  className={`m-btn mt-6 self-start ${featured ? "m-btn-primary" : "m-btn-secondary"}`}
-                >
-                  Book a session
-                </Link>
+          {PRICING.map((t) => (
+            <div
+              key={t.track}
+              className="m-th flex flex-col rounded-xl p-6 sm:p-8"
+              style={{ backgroundColor: "var(--tile)" }}
+            >
+              <div className="flex flex-wrap items-center justify-between gap-3">
+                <h3 className="m-h3">{t.track}</h3>
+                {t.featured && (
+                  <span className="rounded-full bg-[var(--m-indigo)] px-3 py-1.5 text-[13px] font-[480] text-white">
+                    Most students start here
+                  </span>
+                )}
               </div>
-            );
-          })}
+              <p className="m-body m-th mt-2 max-w-[420px]" style={{ color: "var(--muted)" }}>
+                {t.blurb}
+              </p>
+
+              <table className="mt-auto w-full border-collapse text-left [&_thead_th]:pt-7">
+                <caption className="sr-only">{t.track} prices</caption>
+                <thead>
+                  <tr className="m-th text-[13px] font-[440]" style={{ color: "var(--muted)" }}>
+                    <th scope="col" className="pb-3 font-[440]">
+                      <span className="sr-only">Session length</span>
+                    </th>
+                    <th scope="col" className="pb-3 text-right font-[440]">
+                      Single<span className="max-[359px]:hidden"> session</span>
+                    </th>
+                    <th scope="col" className="pb-3 text-right font-[440]">
+                      Bundle of 5
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {t.rows.map((r) => (
+                    <tr key={r.length} className="m-th border-t" style={{ borderColor: "var(--rule)" }}>
+                      <th scope="row" className="whitespace-nowrap py-5 pr-2 align-top text-[16px] font-[480] max-[359px]:text-[14px]">
+                        {r.length}
+                      </th>
+                      <td className="py-5 text-right align-top text-[26px] font-[480] leading-none tracking-[-0.01em] max-[359px]:text-[21px] sm:text-[30px]">
+                        {r.single}
+                      </td>
+                      <td className="py-5 pl-3 text-right align-top">
+                        <span className="block text-[26px] font-[480] leading-none tracking-[-0.01em] max-[359px]:text-[21px] sm:text-[30px]">
+                          {r.bundle}
+                        </span>
+                        <span className="m-th mt-1.5 block text-[13px]" style={{ color: "var(--muted)" }}>
+                          {r.each}
+                        </span>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+
+              <Link
+                href="/contact"
+                className={`m-btn mt-1 self-start ${t.featured ? "m-btn-primary" : "m-btn-secondary"}`}
+              >
+                Book a session
+              </Link>
+            </div>
+          ))}
         </div>
+        <p className="m-th mt-6 text-center text-[14px]" style={{ color: "var(--muted)" }}>
+          A bundle is five sessions of the same length.
+        </p>
       </div>
     </section>
   );
@@ -210,13 +219,13 @@ export function Pricing() {
 
 export function About() {
   return (
-    <section id="about" data-section-theme="dark" className="scroll-mt-[72px] py-24 sm:py-32">
+    <section id="about" data-section-theme="dark" className="scroll-mt-[72px] py-20 sm:py-24">
       <div className="m-wrap">
         <div
-          className="m-th grid gap-10 border-t pt-10 md:grid-cols-[minmax(0,0.8fr)_minmax(0,1fr)] md:gap-16"
+          className="m-th grid gap-10 border-t pt-10 md:grid-cols-[minmax(0,0.8fr)_minmax(0,1fr)] md:items-center md:gap-16"
           style={{ borderColor: "var(--rule)" }}
         >
-          <div className="relative aspect-[4/5] w-full max-w-[400px] overflow-hidden rounded-xl bg-[var(--tile)]">
+          <div className="relative aspect-[4/5] w-full max-w-[360px] overflow-hidden rounded-xl bg-[var(--tile)]">
             <Image
               src={zacPhoto}
               alt="Zac Klein"
@@ -226,7 +235,7 @@ export function About() {
               className="object-cover"
             />
           </div>
-          <div className="md:pt-2">
+          <div>
             <h2 className="m-h3" style={{ fontSize: "clamp(24px, 2.3vw, 33px)" }}>
               Hey, I&apos;m Zac.
             </h2>
@@ -267,7 +276,7 @@ export function Faq() {
   const [open, setOpen] = useState<number | null>(0);
   const id = useId();
   return (
-    <section id="faq" data-section-theme="dark" className="scroll-mt-[72px] py-24 sm:py-32">
+    <section id="faq" data-section-theme="dark" className="scroll-mt-[72px] py-20 sm:py-24">
       <div className="m-wrap grid gap-10 md:grid-cols-[minmax(0,0.8fr)_minmax(0,1fr)] md:gap-16">
         <h2 className="m-h3" style={{ fontSize: "clamp(24px, 2.3vw, 33px)" }}>
           Questions parents ask.
@@ -326,7 +335,7 @@ export function Faq() {
 
 export function Closing() {
   return (
-    <section id="contact" data-section-theme="dark" className="pb-16 pt-24 sm:pt-36">
+    <section id="contact" data-section-theme="dark" className="pb-16 pt-20 sm:pt-28">
       <div className="m-wrap text-center">
         <h2 className="m-h2 mx-auto max-w-[560px] text-balance">
           Have a student with an idea? Let&apos;s make it real.

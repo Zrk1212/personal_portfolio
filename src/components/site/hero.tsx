@@ -34,6 +34,8 @@ export function Hero() {
   const wrapRef = useRef<HTMLElement>(null);
   const stageRef = useRef<HTMLDivElement>(null);
   const sceneRef = useRef<HTMLDivElement>(null);
+  const photoRef = useRef<HTMLImageElement>(null);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
   const shotRef = useRef<HTMLDivElement>(null);
   const slotRef = useRef<HTMLDivElement>(null);
   const copyRef = useRef<HTMLDivElement>(null);
@@ -67,6 +69,24 @@ export function Hero() {
     let r0: Rect = { x: 0, y: 0, w: 1, h: 1 }; // laptop screen in the photo
     let r1: Rect = r0; // full view
     let r2: Rect = r0; // docked slot
+    let box: Rect = r0; // where the photo sits when it covers the stage
+    // A plain copy of whichever photo file the browser picked. The on-page
+    // <img> uses srcset, whose reported size is density-adjusted; this copy
+    // reports real pixels, which is what canvas cropping needs.
+    let zoomSource: HTMLImageElement | null = null;
+
+    function prepareZoomSource() {
+      const photo = photoRef.current;
+      const src = photo?.currentSrc;
+      if (!src || zoomSource?.src === src) return;
+      const copy = new window.Image();
+      copy.decoding = "async";
+      copy.onload = () => {
+        zoomSource = copy;
+        apply();
+      };
+      copy.src = src; // already in the cache, so this costs no download
+    }
 
     function measure() {
       if (!stage || !shot) return;
@@ -79,12 +99,25 @@ export function Hero() {
       const bh = bw / IMG_RATIO;
       const bx = (W - bw) / 2;
       const by = (H - bh) * ANCHOR_Y;
+      box = { x: bx, y: by, w: bw, h: bh };
       r0 = {
         x: bx + SCREEN.x * bw,
         y: by + SCREEN.y * bh,
         w: SCREEN.w * bw,
         h: SCREEN.h * bh,
       };
+
+      // The zoom is painted on a canvas exactly the size of the stage.
+      const canvas = canvasRef.current;
+      if (canvas) {
+        const dpr = Math.min(window.devicePixelRatio || 1, 2);
+        const cw = Math.max(1, Math.round(W * dpr));
+        const ch = Math.max(1, Math.round(H * dpr));
+        if (canvas.width !== cw || canvas.height !== ch) {
+          canvas.width = cw;
+          canvas.height = ch;
+        }
+      }
 
       const availH = H - NAV_H - 56;
       const fw = Math.max(120, Math.min(W - 48, 1160, availH * 1.6));
@@ -152,9 +185,48 @@ export function Hero() {
       const cy = lerp(c0y, r1.y + r1.h / 2, f);
       const h = w * lerp(r0.h / r0.w, r1.h / r1.w, z);
 
-      scene.style.transformOrigin = `${c0x}px ${c0y}px`;
-      scene.style.transform = `translate3d(${cx - c0x}px, ${cy - c0y}px, 0) scale(${w / r0.w})`;
-      scene.style.opacity = String(1 - clamp((z - 0.7) / 0.3));
+      // The push into the laptop. Scaling the photo itself would hand the GPU a
+      // layer many screens wide, so the zoomed view is drawn onto a canvas the
+      // size of the stage instead: the visible crop of the photo, nothing more.
+      const sceneOpacity = 1 - clamp((z - 0.7) / 0.3);
+      const canvas = canvasRef.current;
+      const photo = zoomSource;
+      const photoReady = !!photo && photo.complete && photo.naturalWidth > 0;
+      const zooming = z > 0.0005;
+      if (canvas && zooming && photoReady && sceneOpacity > 0) {
+        const s = w / r0.w;
+        const tx = cx - c0x;
+        const ty = cy - c0y;
+        // Stage point v shows photo-box point q:  v = c0 + (q - c0) * s + t
+        const qx = c0x + (0 - tx - c0x) / s;
+        const qy = c0y + (0 - ty - c0y) / s;
+        const iw = photo.naturalWidth;
+        const ih = photo.naturalHeight;
+        const ctx = canvas.getContext("2d");
+        if (ctx) {
+          ctx.imageSmoothingQuality = "high";
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+          ctx.drawImage(
+            photo,
+            ((qx - box.x) / box.w) * iw,
+            ((qy - box.y) / box.h) * ih,
+            (W / s / box.w) * iw,
+            (H / s / box.h) * ih,
+            0,
+            0,
+            canvas.width,
+            canvas.height
+          );
+        }
+        canvas.style.opacity = String(sceneOpacity);
+        canvas.style.visibility = "visible";
+        scene.style.visibility = "hidden";
+      } else {
+        if (canvas) canvas.style.visibility = "hidden";
+        // At rest, or if the photo hasn't arrived yet, the plain image shows.
+        scene.style.visibility = !zooming || !photoReady ? "visible" : "hidden";
+        scene.style.opacity = String(zooming ? sceneOpacity : 1);
+      }
 
       // Panel: follows the laptop screen, then eases into its slot.
       const x = lerp(cx - w / 2, r2.x, d);
@@ -191,6 +263,7 @@ export function Hero() {
 
     function onResize() {
       measure();
+      prepareZoomSource();
       apply();
     }
 
@@ -202,6 +275,8 @@ export function Hero() {
     }
     const leftEl = leftRef.current;
     leftEl?.addEventListener("focusin", onFocusIn);
+    const photoEl = photoRef.current;
+    photoEl?.addEventListener("load", prepareZoomSource);
 
     onResize();
     // Web fonts change the text metrics the fit logic depends on.
@@ -218,6 +293,7 @@ export function Hero() {
       window.removeEventListener("pageshow", onResize);
       window.removeEventListener("scroll", apply);
       leftEl?.removeEventListener("focusin", onFocusIn);
+      photoEl?.removeEventListener("load", prepareZoomSource);
     };
   }, [reduced]);
 
@@ -254,12 +330,13 @@ export function Hero() {
           }`}
         >
           {/* Photo */}
-          <div ref={sceneRef} className="absolute inset-0 will-change-transform" aria-hidden>
+          <div ref={sceneRef} className="absolute inset-0" aria-hidden>
             <div
               className="absolute left-1/2 aspect-[3/2] w-[max(100vw,150svh)] -translate-x-1/2 bg-[#8a7f93]"
               style={{ top: `calc((100svh - max(100vw, 150svh) / 1.5) * ${ANCHOR_Y})` }}
             >
               <Image
+                ref={photoRef}
                 src={overlook}
                 alt=""
                 fill
@@ -271,6 +348,14 @@ export function Hero() {
               />
             </div>
           </div>
+
+          {/* The zoomed view of the photo, painted while the camera pushes in */}
+          <canvas
+            ref={canvasRef}
+            aria-hidden
+            className="pointer-events-none absolute inset-0 h-full w-full"
+            style={{ visibility: "hidden" }}
+          />
 
           {/* Dusk tint so the headline reads over the sky */}
           <div
@@ -300,7 +385,7 @@ export function Hero() {
                 onSubmit={onSubmit}
                 className="m-hero-form mx-auto mt-7 flex max-w-[520px] flex-col items-stretch justify-center gap-2 sm:flex-row sm:items-center"
               >
-                <div className="flex h-10 items-center rounded-full bg-[rgba(175,178,206,0.24)] pl-5 backdrop-blur-md transition-colors duration-300 focus-within:bg-[rgba(175,178,206,0.34)]">
+                <div className="flex h-10 items-center rounded-full bg-[rgba(120,118,150,0.5)] pl-5 transition-colors duration-300 focus-within:bg-[rgba(120,118,150,0.62)]">
                   <label htmlFor="hero-email" className="sr-only">
                     Your email
                   </label>
@@ -318,7 +403,7 @@ export function Hero() {
                 </div>
                 <a
                   href="#pricing"
-                  className="m-btn shrink-0 bg-[rgba(175,178,206,0.24)] text-[#ededf3] backdrop-blur-md hover:bg-[rgba(175,178,206,0.34)]"
+                  className="m-btn shrink-0 bg-[rgba(120,118,150,0.5)] text-[#ededf3] hover:bg-[rgba(120,118,150,0.62)]"
                 >
                   See pricing
                 </a>
@@ -347,7 +432,7 @@ export function Hero() {
           {/* The laptop screen. One element for the whole sequence. */}
           <div
             ref={shotRef}
-            className="absolute origin-top-left will-change-transform"
+            className="absolute origin-top-left"
             style={{ opacity: 0 }}
             aria-hidden={!docked}
           >
@@ -361,7 +446,7 @@ export function Hero() {
 
           <p
             ref={noteRef}
-            className="m-hero-note pointer-events-none absolute inset-x-0 bottom-6 mx-auto w-fit max-w-[calc(100vw-32px)] rounded-lg bg-[rgba(23,23,33,0.72)] px-4 py-2.5 text-center text-[12px] leading-[1.35] tracking-[0.02em] text-[#ededf3] backdrop-blur-md sm:text-[13px]"
+            className="m-hero-note pointer-events-none absolute inset-x-0 bottom-6 mx-auto w-fit max-w-[calc(100vw-32px)] rounded-lg bg-[rgba(23,23,33,0.8)] px-4 py-2.5 text-center text-[12px] leading-[1.35] tracking-[0.02em] text-[#ededf3] sm:text-[13px]"
           >
             In person in Chappaqua and Westchester, or over Zoom year-round.
           </p>

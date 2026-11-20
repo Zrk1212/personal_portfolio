@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useId, useRef, useState } from "react";
+import { Logo } from "./logo";
 
 type Theme = "dark" | "warm" | "cool";
 
@@ -126,9 +127,10 @@ function Nav({ home, clear }: { home: boolean; clear: boolean }) {
       <nav className="flex h-[72px] items-center justify-between gap-3 px-4 sm:gap-6 sm:px-8">
         <Link
           href={home ? "#top" : "/"}
-          className="m-focus shrink-0 whitespace-nowrap rounded text-[15px] font-[520] tracking-[0.2em] max-[359px]:text-[13px] max-[359px]:tracking-[0.14em]"
+          aria-label="Zac Klein, home"
+          className="m-focus shrink-0 rounded"
         >
-          ZAC KLEIN
+          <Logo />
         </Link>
 
         <div className="hidden items-center gap-1 md:flex">
@@ -240,7 +242,7 @@ function Footer({ home }: { home: boolean }) {
           style={{ borderColor: "var(--rule)" }}
         >
           <div>
-            <div className="text-[15px] font-[520] tracking-[0.2em]">ZAC KLEIN</div>
+            <Logo />
             <p className="m-th mt-4 max-w-[240px] text-[14px] leading-[1.45]" style={{ color: "var(--muted)" }}>
               One-on-one sessions where high schoolers build and launch a real
               app with AI.

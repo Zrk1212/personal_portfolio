@@ -45,7 +45,7 @@ function CodeArt() {
     <div className="w-[72%] rounded-xl bg-[#1e1e2a] p-5 font-[family-name:var(--font-geist-mono)] text-[13px] leading-[1.7] text-[#ededf3] shadow-[0_18px_40px_-22px_rgba(0,0,0,0.5)]">
       <div className="flex gap-2">
         <span className="text-[#8f9cf5]">&gt;</span>
-        <span className="m-type">add a screen to save favorites</span>
+        <span className="m-type">add a favorites screen</span>
       </div>
       <div className="m-step text-[#c3c3cc]" style={delay(3)}>
         Edited 3 files
@@ -175,7 +175,7 @@ function McpArt() {
 
 function FeedbackArt() {
   return (
-    <div className="relative mr-[14%] w-[52%]">
+    <div className="relative mb-6 mr-[16%] w-[52%]">
       <div className={`${card} p-5`}>
         <div className="h-2.5 w-24 rounded-full bg-[var(--card-muted)] opacity-30" />
         <div className="mt-3 h-2 w-full rounded-full bg-[var(--card-muted)] opacity-15" />
@@ -186,7 +186,7 @@ function FeedbackArt() {
         </div>
       </div>
       <div
-        className={`${card} m-step absolute -right-[30%] bottom-[-22px] w-[190px] rounded-2xl rounded-tl-md px-4 py-2.5 text-[13px] leading-[1.35]`}
+        className={`${card} m-step absolute -right-[32%] bottom-[-30px] z-10 w-[172px] ring-1 ring-black/5 rounded-2xl rounded-tl-md px-4 py-2.5 text-[13px] leading-[1.35]`}
         style={delay(1.4)}
       >
         Make this button easier to find.
@@ -247,7 +247,7 @@ export function Skills() {
   const first = SKILLS.slice(0, 4);
   const second = SKILLS.slice(4);
   return (
-    <section id="learn" data-section-theme="warm" className="scroll-mt-[72px] pb-28 pt-24 sm:pb-36 sm:pt-32">
+    <section id="learn" data-section-theme="warm" className="scroll-mt-[72px] pb-24 pt-24 sm:pb-28 sm:pt-28">
       <div className="m-wrap">
         <SectionHead
           title="Skills they keep after the app ships."
