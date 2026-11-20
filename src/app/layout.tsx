@@ -1,6 +1,11 @@
 import type { Metadata } from "next";
 import { Geist_Mono, Figtree } from "next/font/google";
 import "./globals.css";
+// Styles for single components. Loaded here, after the globals, so every page
+// shares one stylesheet and none is fetched ahead for a page that won't use it.
+import "../components/site/painter.css";
+import "../components/site/step-art.css";
+import "../components/site/closing.css";
 
 // Body and headline face for the tutoring pages (homepage and /contact)
 const figtree = Figtree({
@@ -24,7 +29,7 @@ const OG_IMAGE = {
   url: "/og.jpg",
   width: 1200,
   height: 630,
-  alt: "A desk and laptop on a hilltop overlooking a river valley, with the headline: Your idea is the limit.",
+  alt: "Zac Klein. Your ambition is the limit. One-on-one sessions where your high schooler builds and launches a real web or iOS app.",
 };
 
 export const metadata: Metadata = {

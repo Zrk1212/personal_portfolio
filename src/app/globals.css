@@ -494,17 +494,91 @@ html:has(.m-site) ::-webkit-scrollbar-thumb:hover {
   box-shadow: 0 0 0 1000px #262633 inset;
   transition: background-color 99999s ease-out;
 }
-.m-hero-input:-webkit-autofill,
-.m-hero-input:-webkit-autofill:hover,
-.m-hero-input:-webkit-autofill:focus {
-  -webkit-text-fill-color: #ededf3;
-  caret-color: #ededf3;
-  transition: background-color 99999s ease-out;
+
+/* ---------- Hero: the scroll sequence and how it comes to rest ---------- */
+/* The hero corrects the scroll position itself when the sequence settles.
+   Browser scroll anchoring would correct it a second time. */
+html:has(.m-site) {
+  overflow-anchor: none;
+}
+/* Touch screens scroll one screen through the sequence, so settling moves
+   nothing. With a mouse or trackpad there is room for a longer run. */
+.m-hero {
+  height: 200svh;
+}
+@media (hover: hover) and (pointer: fine) {
+  .m-hero {
+    height: calc(100svh + 1400px);
+  }
+}
+.m-hero-stage {
+  position: sticky;
+  top: 0;
+  height: 100svh;
+  min-height: 320px;
+  overflow: hidden;
+}
+.m-hero-view {
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 100svh;
+  min-height: 320px;
+  overflow: hidden;
+}
+/* Settled: the photo on one screen, the app list on the next */
+.m-hero[data-done] {
+  height: auto;
+}
+.m-hero[data-done] .m-hero-stage {
+  position: relative;
+  height: 200svh;
+  min-height: 640px;
+}
+.m-hero[data-done] .m-dock {
+  top: max(100svh, 320px);
+}
+@media (prefers-reduced-motion: reduce) {
+  .m-hero {
+    height: auto;
+  }
+  .m-hero .m-hero-stage {
+    position: relative;
+    height: 200svh;
+    min-height: 640px;
+  }
+  .m-hero .m-dock {
+    top: max(100svh, 320px);
+  }
+}
+
+/* Dusk tint for the headline, and edges that fall away into the page colour */
+.m-hero-shade {
+  background:
+    radial-gradient(120% 90% at 50% 58%, rgba(23, 23, 33, 0) 52%, rgba(23, 23, 33, 0.3) 78%, rgba(23, 23, 33, 0.72) 100%),
+    linear-gradient(180deg, rgba(23, 23, 33, 0.7) 0%, rgba(23, 23, 33, 0.36) 24%, rgba(23, 23, 33, 0.08) 52%, rgba(23, 23, 33, 0) 76%, rgba(23, 23, 33, 0.55) 100%);
+}
+/* A feathered patch of blur behind the headline, so the scene reads as distant */
+.m-hero-haze {
+  -webkit-backdrop-filter: blur(9px);
+  backdrop-filter: blur(9px);
+  -webkit-mask-image:
+    linear-gradient(90deg, transparent, #000 20%, #000 80%, transparent),
+    linear-gradient(transparent, #000 18%, #000 82%, transparent);
+  mask-image:
+    linear-gradient(90deg, transparent, #000 20%, #000 80%, transparent),
+    linear-gradient(transparent, #000 18%, #000 82%, transparent);
+  -webkit-mask-composite: source-in;
+  mask-composite: intersect;
 }
 
 /* ---------- Hero: headline block ---------- */
 .m-hero-copy {
   padding-top: 124px;
+}
+.m-hero-cta {
+  display: flex;
+  justify-content: center;
+  margin-top: 28px;
 }
 @media (min-width: 640px) {
   .m-hero-copy {
@@ -520,28 +594,19 @@ html:has(.m-site) ::-webkit-scrollbar-thumb:hover {
   .m-hero-copy {
     padding-top: 84px;
   }
-  .m-hero-copy .m-hero-form {
+  .m-hero-copy .m-hero-cta {
     margin-top: 16px;
   }
-  .m-hero-note {
-    display: none;
-  }
 }
-/* Phones held sideways: one-line form, tighter text */
+/* Phones held sideways: tighter text */
 @media (max-height: 480px) and (min-width: 500px) {
-  .m-hero-copy .m-hero-form {
-    flex-direction: row;
-    align-items: center;
+  .m-hero-copy .m-hero-cta {
     margin-top: 14px;
   }
   .m-hero-copy .m-hero-sub {
     font-size: 15px;
     margin-top: 6px;
     max-width: 500px;
-  }
-  .m-hero-copy .m-hero-input {
-    width: 130px;
-    flex: none;
   }
 }
 @media (max-height: 360px) {
@@ -556,6 +621,134 @@ html:has(.m-site) ::-webkit-scrollbar-thumb:hover {
   }
   .m-h1 {
     font-size: 58px;
+  }
+}
+
+/* ---------- Hero: the glass prompt bar ---------- */
+.m-chat {
+  container-type: inline-size;
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: min(100%, 468px);
+  height: 56px;
+  padding: 0 8px 0 20px;
+  border-radius: 999px;
+  color: #fff;
+  text-align: left;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.26) 0%, rgba(255, 255, 255, 0.09) 100%),
+    rgba(108, 104, 140, 0.24);
+  -webkit-backdrop-filter: blur(20px) saturate(175%);
+  backdrop-filter: blur(20px) saturate(175%);
+  box-shadow:
+    inset 0 1px 0.5px rgba(255, 255, 255, 0.62),
+    inset 0 -1px 0.5px rgba(255, 255, 255, 0.14),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.16),
+    0 14px 34px -14px rgba(23, 23, 33, 0.62);
+  transition: box-shadow 0.3s var(--m-ease);
+}
+.m-chat::before {
+  content: "";
+  position: absolute;
+  inset: 1px;
+  border-radius: inherit;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0) 46%);
+  opacity: 0.55;
+  pointer-events: none;
+}
+.m-chat:hover {
+  box-shadow:
+    inset 0 1px 0.5px rgba(255, 255, 255, 0.75),
+    inset 0 -1px 0.5px rgba(255, 255, 255, 0.2),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.26),
+    0 18px 40px -14px rgba(23, 23, 33, 0.7);
+}
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .m-chat {
+    background: rgba(92, 88, 118, 0.88);
+  }
+}
+.m-chat-spark {
+  position: relative;
+  flex: none;
+  width: 18px;
+  height: 18px;
+  opacity: 0.92;
+}
+.m-chat-line {
+  position: relative;
+  display: grid;
+  flex: 1;
+  min-width: 0;
+  font-size: clamp(12px, 4.1cqw, 17px);
+  font-weight: 420;
+  line-height: 1.25;
+  white-space: nowrap;
+}
+.m-chat-sizer,
+.m-chat-typed {
+  grid-area: 1 / 1;
+}
+.m-chat-sizer {
+  visibility: hidden;
+}
+.m-chat-caret {
+  display: inline-block;
+  width: 1.5px;
+  height: 1.15em;
+  margin-left: 2px;
+  vertical-align: -0.2em;
+  background: currentColor;
+  animation: m-caret 1.05s steps(1) infinite;
+}
+@keyframes m-caret {
+  50% {
+    opacity: 0;
+  }
+}
+.m-chat-send {
+  position: relative;
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--m-indigo);
+  color: #fff;
+  transition: background-color 0.3s var(--m-ease);
+}
+.m-chat:hover .m-chat-send {
+  background: var(--m-indigo-hover);
+}
+@media (max-width: 480px) {
+  .m-chat {
+    height: 50px;
+    gap: 8px;
+    padding: 0 6px 0 16px;
+  }
+  .m-chat-spark {
+    display: none;
+  }
+  .m-chat-send {
+    width: 38px;
+    height: 38px;
+  }
+}
+@media (max-height: 480px) {
+  .m-chat {
+    height: 46px;
+  }
+  .m-chat-send {
+    width: 34px;
+    height: 34px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .m-chat-caret {
+    animation: none;
   }
 }
 
@@ -595,6 +788,31 @@ html:has(.m-site) ::-webkit-scrollbar-thumb:hover {
   }
   .m-dock-col {
     order: 1;
+  }
+}
+/* On desktop the panel takes most of the row, as large as the screen height allows */
+@media (min-width: 1024px) {
+  .m-dock .m-dock-grid {
+    max-width: min(1400px, 100%);
+    grid-template-columns: minmax(0, 360px) minmax(0, 1fr);
+    gap: 56px;
+  }
+  .m-dock .m-dock-slot {
+    width: min(100%, calc((100svh - 150px) * 1.6));
+    margin-inline: 0;
+    justify-self: end;
+  }
+}
+@media (min-width: 1280px) {
+  .m-dock .m-dock-grid {
+    grid-template-columns: minmax(0, 400px) minmax(0, 1fr);
+  }
+}
+@media (min-width: 1800px) {
+  .m-dock .m-dock-grid {
+    max-width: min(1640px, 100%);
+    grid-template-columns: minmax(0, 440px) minmax(0, 1fr);
+    gap: 72px;
   }
 }
 /* Shorter screens drop the extras first, then the descriptions */
@@ -641,4 +859,15 @@ html:has(.m-site) ::-webkit-scrollbar-thumb:hover {
   .m-dock-grid {
     gap: 32px;
   }
+}
+
+/* ---------- Pricing: the "Best value" price ---------- */
+/* Tinted to match its chip. The card follows the page theme while another
+   section is in view, so the tint has a darker form for the light themes. */
+.m-site .pr-best {
+  color: #aab4ff;
+}
+.m-site[data-theme="warm"] .pr-best,
+.m-site[data-theme="cool"] .pr-best {
+  color: #3d4fd4;
 }

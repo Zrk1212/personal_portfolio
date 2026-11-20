@@ -152,6 +152,7 @@ export type PriceRow = {
   single: string;
   bundle: string;
   each: string; // per-session price inside the bundle
+  best?: boolean; // highlight the bundle price as the best value
 };
 
 export type PriceTrack = {
@@ -168,7 +169,7 @@ export const PRICING: PriceTrack[] = [
     featured: true,
     rows: [
       { length: "30 minutes", single: "$60", bundle: "$250", each: "$50 each" },
-      { length: "1 hour", single: "$100", bundle: "$425", each: "$85 each" },
+      { length: "1 hour", single: "$100", bundle: "$425", each: "$85 each", best: true },
     ],
   },
   {
@@ -177,7 +178,7 @@ export const PRICING: PriceTrack[] = [
       "An iPhone app. iOS costs double because it adds Xcode, Apple's developer setup and the App Store / TestFlight process.",
     rows: [
       { length: "30 minutes", single: "$120", bundle: "$500", each: "$100 each" },
-      { length: "1 hour", single: "$200", bundle: "$850", each: "$170 each" },
+      { length: "1 hour", single: "$200", bundle: "$850", each: "$170 each", best: true },
     ],
   },
 ];

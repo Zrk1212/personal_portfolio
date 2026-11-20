@@ -2,18 +2,25 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { PROJECTS } from "@/app/content";
 import overlook from "../../../public/hero/overlook.webp";
+import { HeroChat } from "./hero-chat";
+import { PaintedPanel } from "./painter";
 import { TabList, usePrefersReducedMotion } from "./shell";
 
 /* The laptop display inside /hero/overlook.webp, as fractions of the image.
    Re-measure these if the photo is ever swapped. */
-const SCREEN = { x: 0.4479, y: 0.6787, w: 0.0931, h: 0.0791 };
+const SCREEN = { x: 0.4762, y: 0.6392, w: 0.0472, h: 0.0449 };
 const IMG_RATIO = 3 / 2;
 const ANCHOR_Y = 0.6; // how much of the vertical crop comes off the top
 const NAV_H = 72;
+// Remembered for the tab, so a reload part-way down the page comes back settled
+const DONE_KEY = "zk-hero-done";
+const Y_KEY = "zk-hero-y";
+// True once the sequence has played in this document, so coming back to the
+// homepage from another page finds it settled, where the reader left it.
+let playedHere = false;
 
 type Rect = { x: number; y: number; w: number; h: number };
 
@@ -26,31 +33,43 @@ const lerp = (a: number, b: number, t: number) => a + (b - a) * t;
    The camera pushes into the laptop in the photo, the laptop's screen
    (a real DOM panel, so it stays sharp) grows to fill the stage, then
    docks beside the list of apps I've built.
+
+   The sequence plays once. When it ends the section turns into two
+   ordinary screens, the photo and then the app list, and stays that
+   way until the page is reloaded.
 ----------------------------------------------------------------- */
 export function Hero() {
   const reduced = usePrefersReducedMotion();
-  const router = useRouter();
 
   const wrapRef = useRef<HTMLElement>(null);
   const stageRef = useRef<HTMLDivElement>(null);
+  const viewRef = useRef<HTMLDivElement>(null);
   const sceneRef = useRef<HTMLDivElement>(null);
   const photoRef = useRef<HTMLImageElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const shotRef = useRef<HTMLDivElement>(null);
   const slotRef = useRef<HTMLDivElement>(null);
+  const dockRef = useRef<HTMLDivElement>(null);
   const copyRef = useRef<HTMLDivElement>(null);
   const copyInnerRef = useRef<HTMLDivElement>(null);
+  const ctaRef = useRef<HTMLDivElement>(null);
   const leftRef = useRef<HTMLDivElement>(null);
   const leftInnerRef = useRef<HTMLDivElement>(null);
   const shadeRef = useRef<HTMLDivElement>(null);
-  const noteRef = useRef<HTMLParagraphElement>(null);
-  const formRef = useRef<HTMLFormElement>(null);
+  const hazeRef = useRef<HTMLDivElement>(null);
+  const laptopRef = useRef<HTMLDivElement>(null);
+  const coverRef = useRef<HTMLDivElement>(null);
+  const coverLogoRef = useRef<HTMLImageElement>(null);
 
   const [active, setActive] = useState(0);
   const [docked, setDocked] = useState(false);
   const dockedRef = useRef(false);
+  // Once the panel has docked the painter keeps going, even if the reader scrolls back
+  const [painting, setPainting] = useState(false);
+  const [done, setDone] = useState(() => playedHere);
+  const doneRef = useRef(playedHere);
   // The laptop screen fades in with the photo, so a slow connection never
-  // shows a dark panel floating over the blurred preview.
+  // shows a white panel floating over the blurred preview.
   const [photoReady, setPhotoReady] = useState(false);
   useEffect(() => {
     const t = window.setTimeout(() => setPhotoReady(true), 4000);
@@ -60,9 +79,10 @@ export function Hero() {
   useEffect(() => {
     const wrap = wrapRef.current;
     const stage = stageRef.current;
+    const view = viewRef.current;
     const scene = sceneRef.current;
     const shot = shotRef.current;
-    if (!wrap || !stage || !scene || !shot) return;
+    if (!wrap || !stage || !view || !scene || !shot) return;
 
     let W = 0;
     let H = 0;
@@ -74,6 +94,8 @@ export function Hero() {
     // <img> uses srcset, whose reported size is density-adjusted; this copy
     // reports real pixels, which is what canvas cropping needs.
     let zoomSource: HTMLImageElement | null = null;
+
+    const isStill = () => reduced || doneRef.current;
 
     function prepareZoomSource() {
       const photo = photoRef.current;
@@ -89,9 +111,9 @@ export function Hero() {
     }
 
     function measure() {
-      if (!stage || !shot) return;
-      W = stage.clientWidth;
-      H = stage.clientHeight;
+      if (!stage || !view || !shot) return;
+      W = view.clientWidth;
+      H = view.clientHeight;
       const st = stage.getBoundingClientRect();
 
       // The photo covers the stage (see the CSS on the scene box).
@@ -106,6 +128,13 @@ export function Hero() {
         w: SCREEN.w * bw,
         h: SCREEN.h * bh,
       };
+      const laptop = laptopRef.current;
+      if (laptop) {
+        laptop.style.left = `${r0.x}px`;
+        laptop.style.top = `${r0.y}px`;
+        laptop.style.width = `${r0.w}px`;
+        laptop.style.height = `${r0.h}px`;
+      }
 
       // The zoom is painted on a canvas exactly the size of the stage.
       const canvas = canvasRef.current;
@@ -128,20 +157,31 @@ export function Hero() {
       const copyInner = copyInnerRef.current;
       if (copyInner) {
         copyInner.style.transform = "";
-        const room = r0.y - 14 - copyInner.offsetTop;
+        const room = r0.y - 16 - copyInner.offsetTop;
         const s = clamp(room / copyInner.offsetHeight, 0.6, 1);
         copyInner.style.transform = s < 1 ? `scale(${s})` : "";
+        // The soft blur behind the headline follows the block's real size
+        const haze = hazeRef.current;
+        if (haze) {
+          const cr = copyInner.getBoundingClientRect();
+          const padX = Math.min(120, W * 0.12);
+          haze.style.left = `${cr.left - st.left - padX}px`;
+          haze.style.top = `${cr.top - st.top - 40}px`;
+          haze.style.width = `${cr.width + padX * 2}px`;
+          haze.style.height = `${cr.height + 84}px`;
+        }
       }
 
-      // Docked column: keep it inside the stage on short screens.
+      // Docked column: keep it inside its screen on short displays.
       const left = leftRef.current;
       const leftInner = leftInnerRef.current;
       const slot = slotRef.current;
-      if (left && leftInner) {
+      const dock = dockRef.current;
+      if (left && leftInner && dock) {
         left.style.transform = "";
         leftInner.style.transform = "";
         const lr = left.getBoundingClientRect();
-        const top = lr.top - st.top;
+        const top = lr.top - dock.getBoundingClientRect().top;
         const sideBySide = slot ? lr.left < slot.getBoundingClientRect().left - 1 : false;
         const minTop = NAV_H + 8;
         const maxBottom = H - 10;
@@ -168,10 +208,55 @@ export function Hero() {
       shot.style.height = `${r2.h}px`;
     }
 
+    function setDockedState(v: boolean) {
+      if (v === dockedRef.current) return;
+      dockedRef.current = v;
+      setDocked(v);
+      if (v) setPainting(true);
+    }
+
+    // The resting layout: photo and headline on one screen, the app list and
+    // its panel on the next. Used after the sequence has played, and from the
+    // start for readers who ask for reduced motion.
+    function applyStill() {
+      if (!scene || !shot) return;
+      const canvas = canvasRef.current;
+      if (canvas) canvas.style.visibility = "hidden";
+      scene.style.visibility = "visible";
+      scene.style.opacity = "1";
+      shot.style.transform = "none";
+      shot.style.opacity = "1";
+      const copy = copyRef.current;
+      if (copy) {
+        copy.style.opacity = "1";
+        copy.style.transform = "none";
+        copy.style.pointerEvents = "auto";
+      }
+      if (ctaRef.current) ctaRef.current.inert = false;
+      if (shadeRef.current) shadeRef.current.style.opacity = "1";
+      if (hazeRef.current) {
+        hazeRef.current.style.display = "";
+        hazeRef.current.style.opacity = "1";
+      }
+      const left = leftRef.current;
+      if (left) {
+        left.style.opacity = "1";
+        left.style.transform = "none";
+        left.style.pointerEvents = "auto";
+      }
+      if (coverRef.current) coverRef.current.style.opacity = "0";
+      if (laptopRef.current) laptopRef.current.style.opacity = "1";
+      setDockedState(true);
+    }
+
     function apply() {
       if (!wrap || !scene || !shot) return;
+      if (isStill()) {
+        applyStill();
+        return;
+      }
       const total = wrap.offsetHeight - H;
-      const p = reduced || total <= 0 ? 0 : clamp(-wrap.getBoundingClientRect().top / total);
+      const p = total <= 0 ? 0 : clamp(-wrap.getBoundingClientRect().top / total);
 
       const z = ease(clamp((p - 0.03) / 0.55)); // push into the laptop
       const d = ease(clamp((p - 0.66) / 0.24)); // dock beside the list
@@ -233,18 +318,30 @@ export function Hero() {
       const y = lerp(cy - h / 2, r2.y, d);
       const pw = lerp(w, r2.w, d);
       const ph = lerp(h, r2.h, d);
-      shot.style.transform = `translate3d(${x - r2.x}px, ${y - r2.y}px, 0) scale(${pw / r2.w}, ${ph / r2.h})`;
+      const sx = pw / r2.w;
+      const sy = ph / r2.h;
+      shot.style.transform = `translate3d(${x - r2.x}px, ${y - r2.y}px, 0) scale(${sx}, ${sy})`;
       shot.style.opacity = "1";
+      // The white screen with the logo on it gives way to the painted panel as
+      // it docks. The panel changes shape on the way, so the logo is scaled
+      // back the other way to keep its proportions.
+      if (coverRef.current) coverRef.current.style.opacity = String(1 - clamp((d - 0.5) / 0.45));
+      if (coverLogoRef.current) coverLogoRef.current.style.transform = `scale(1, ${sx / sy})`;
+      if (laptopRef.current) laptopRef.current.style.opacity = "0";
 
       const copy = copyRef.current;
+      const o = 1 - clamp(p / 0.1);
       if (copy) {
-        const o = 1 - clamp(p / 0.1);
         copy.style.opacity = String(o);
         copy.style.transform = `translate3d(0, ${-p * 120}px, 0)`;
         copy.style.pointerEvents = o > 0.5 ? "auto" : "none";
-        // The headline stays readable to assistive tech; only the controls switch off
-        if (formRef.current) formRef.current.inert = o < 0.5;
-        if (noteRef.current) noteRef.current.style.opacity = String(o);
+      }
+      // The headline stays readable to assistive tech; only the link switches off
+      if (ctaRef.current) ctaRef.current.inert = o < 0.5;
+      const haze = hazeRef.current;
+      if (haze) {
+        haze.style.display = o <= 0 ? "none" : "";
+        haze.style.opacity = String(o);
       }
       if (shadeRef.current) shadeRef.current.style.opacity = String(1 - clamp(p / 0.3));
       const left = leftRef.current;
@@ -254,180 +351,251 @@ export function Hero() {
         left.style.pointerEvents = d > 0.9 ? "auto" : "none";
       }
 
-      const isDocked = d > 0.98;
-      if (isDocked !== dockedRef.current) {
-        dockedRef.current = isDocked;
-        setDocked(isDocked);
+      setDockedState(d > 0.98);
+      if (p >= 0.999) settle("end");
+    }
+
+    // Turn the sequence into two ordinary screens, keeping whatever the reader
+    // is looking at where it is.
+    function settle(where: "end" | "link" | "focus" | "restore") {
+      if (!wrap || isStill()) return;
+      const before = wrap.getBoundingClientRect();
+      const y = window.scrollY;
+      const docTop = before.top + y;
+      const total = wrap.offsetHeight - H;
+      const scrolled = -before.top;
+
+      doneRef.current = true;
+      playedHere = true;
+      wrap.setAttribute("data-done", "");
+      measure();
+      applyStill();
+
+      try {
+        sessionStorage.setItem(DONE_KEY, "1");
+      } catch {
+        // Private mode: a reload simply plays the sequence again.
       }
+      let target = y;
+      if (where === "restore") target = y;
+      else if (where === "focus") target = docTop + H;
+      else if (scrolled >= total) target = y - (total - H); // past the end: nothing below moves
+      else if (scrolled > total * 0.5) target = docTop + H; // most of the way: land on the app list
+      else if (scrolled > 0) target = docTop; // barely started: back to the photo
+      if (Math.abs(target - y) > 0.5) window.scrollTo({ top: target, behavior: "instant" });
+      setDone(true);
     }
 
     function onResize() {
       measure();
-      prepareZoomSource();
+      if (!isStill()) prepareZoomSource();
       apply();
     }
 
     // Keyboard users reach the app list by tabbing: bring it on screen for them.
     function onFocusIn() {
-      if (reduced || !wrap || dockedRef.current) return;
-      const end = wrap.getBoundingClientRect().top + window.scrollY + wrap.offsetHeight - H;
-      window.scrollTo({ top: end, behavior: "instant" });
+      if (!reduced) settle("focus");
+    }
+    // A jump to another section must not be cut short by the switch above, so
+    // make the switch first and let the browser scroll the settled page.
+    function onLinkClick(e: MouseEvent) {
+      if (isStill()) return;
+      const link = (e.target as Element | null)?.closest?.("a[href]");
+      if (link?.getAttribute("href")?.includes("#")) settle("link");
+    }
+    // Same for the End key, which scrolls smoothly to the bottom of the page.
+    function onKeyDown(e: KeyboardEvent) {
+      if (e.key === "End" || (e.key === "ArrowDown" && e.metaKey)) settle("link");
     }
     const leftEl = leftRef.current;
     leftEl?.addEventListener("focusin", onFocusIn);
+    document.addEventListener("keydown", onKeyDown, true);
+    document.addEventListener("click", onLinkClick, true);
     const photoEl = photoRef.current;
     photoEl?.addEventListener("load", prepareZoomSource);
 
+    // A visit that opens on a named section: hold that section in place while
+    // fonts and images finish moving things, until the reader takes over.
+    let hashTarget: HTMLElement | null = null;
+    const holdHash = () => hashTarget?.scrollIntoView({ behavior: "instant", block: "start" });
+    const releaseHash = () => {
+      hashTarget = null;
+    };
+    for (const type of ["wheel", "touchstart", "keydown", "pointerdown"]) {
+      window.addEventListener(type, releaseHash, { passive: true, once: true });
+    }
+
+    measure();
+    if (!isStill()) {
+      // Arriving part-way down the page: start settled, so the position the
+      // browser restores (or the section named in the address) is the right one.
+      const nav = performance.getEntriesByType("navigation")[0] as PerformanceNavigationTiming | undefined;
+      const returning = nav?.type === "reload" || nav?.type === "back_forward";
+      let wasDone = false;
+      try {
+        wasDone = sessionStorage.getItem(DONE_KEY) === "1" && Number(sessionStorage.getItem(Y_KEY)) > 4;
+      } catch {
+        wasDone = false;
+      }
+      const hash = window.location.hash.slice(1);
+      const target = hash && hash !== "top" ? document.getElementById(hash) : null;
+      if (returning && wasDone) settle("restore");
+      else if (target && !returning) {
+        settle("restore");
+        target.scrollIntoView({ behavior: "instant", block: "start" });
+        hashTarget = target;
+      } else {
+        try {
+          sessionStorage.removeItem(DONE_KEY);
+        } catch {
+          // nothing to clear
+        }
+      }
+    }
     onResize();
+    const onPageHide = () => {
+      try {
+        sessionStorage.setItem(Y_KEY, String(Math.round(window.scrollY)));
+      } catch {
+        // Private mode
+      }
+    };
+    window.addEventListener("pagehide", onPageHide);
     // Web fonts change the text metrics the fit logic depends on.
-    document.fonts?.ready.then(onResize).catch(() => {});
-    const settle = window.setTimeout(onResize, 400);
+    const refit = () => {
+      onResize();
+      holdHash();
+    };
+    document.fonts?.ready.then(refit).catch(() => {});
+    const settleTimer = window.setTimeout(refit, 400);
+    const hashTimer = window.setTimeout(() => {
+      holdHash();
+      releaseHash();
+    }, 1500);
     window.addEventListener("resize", onResize);
     window.addEventListener("orientationchange", onResize);
     window.addEventListener("pageshow", onResize);
-    if (!reduced) window.addEventListener("scroll", apply, { passive: true });
+    window.addEventListener("scroll", apply, { passive: true });
     return () => {
-      window.clearTimeout(settle);
+      window.clearTimeout(settleTimer);
+      window.clearTimeout(hashTimer);
+      for (const type of ["wheel", "touchstart", "keydown", "pointerdown"]) {
+        window.removeEventListener(type, releaseHash);
+      }
       window.removeEventListener("resize", onResize);
       window.removeEventListener("orientationchange", onResize);
       window.removeEventListener("pageshow", onResize);
       window.removeEventListener("scroll", apply);
+      window.removeEventListener("pagehide", onPageHide);
       leftEl?.removeEventListener("focusin", onFocusIn);
+      document.removeEventListener("click", onLinkClick, true);
+      document.removeEventListener("keydown", onKeyDown, true);
       photoEl?.removeEventListener("load", prepareZoomSource);
     };
   }, [reduced]);
 
-  function onSubmit(e: React.FormEvent<HTMLFormElement>) {
-    e.preventDefault();
-    const email = String(new FormData(e.currentTarget).get("email") ?? "").trim();
-    try {
-      if (email) sessionStorage.setItem("zk-email", email);
-    } catch {
-      // Private mode: the contact form just starts empty.
-    }
-    router.push("/contact");
-  }
-
   return (
     <>
-      {/* Without JavaScript there is no scroll sequence, so don't reserve room for it */}
+      {/* Without JavaScript there is no sequence: show the two screens as they end up */}
       <noscript>
-        <style>{`#top{height:auto!important}`}</style>
+        <style>{`#top{height:auto!important}#top .m-hero-stage{position:relative!important;height:200svh!important}#top .m-dock{top:100svh!important}#top .m-dock-col{opacity:1!important;pointer-events:auto!important}`}</style>
       </noscript>
 
       <section
         ref={wrapRef}
         id="top"
         data-section-theme="dark"
-        className={`relative ${
-          reduced ? "" : "h-[calc(100svh+1100px)] md:h-[calc(100svh+1500px)]"
-        }`}
+        data-done={done || reduced ? "" : undefined}
+        className="m-hero relative"
       >
-        <div
-          ref={stageRef}
-          className={`m-th top-0 h-[100svh] min-h-[320px] w-full overflow-hidden bg-[var(--bg)] text-[var(--fg)] ${
-            reduced ? "relative" : "sticky"
-          }`}
-        >
-          {/* Photo */}
-          <div ref={sceneRef} className="absolute inset-0" aria-hidden>
-            <div
-              className="absolute left-1/2 aspect-[3/2] w-[max(100vw,150svh)] -translate-x-1/2 bg-[#8a7f93]"
-              style={{ top: `calc((100svh - max(100vw, 150svh) / 1.5) * ${ANCHOR_Y})` }}
-            >
-              <Image
-                ref={photoRef}
-                src={overlook}
-                alt=""
-                fill
-                preload
-                placeholder="blur"
-                onLoad={() => setPhotoReady(true)}
-                sizes="(max-width: 640px) 80vh, (max-aspect-ratio: 3/2) 150vh, 100vw"
-                className="object-cover"
-              />
-            </div>
-          </div>
-
-          {/* The zoomed view of the photo, painted while the camera pushes in */}
-          <canvas
-            ref={canvasRef}
-            aria-hidden
-            className="pointer-events-none absolute inset-0 h-full w-full"
-            style={{ visibility: "hidden" }}
-          />
-
-          {/* Dusk tint so the headline reads over the sky */}
-          <div
-            ref={shadeRef}
-            aria-hidden
-            className="pointer-events-none absolute inset-0"
-            style={{
-              background:
-                "linear-gradient(180deg, rgba(23,23,33,0.62) 0%, rgba(23,23,33,0.34) 34%, rgba(23,23,33,0.08) 62%, rgba(23,23,33,0.3) 100%)",
-            }}
-          />
-
-          {/* Headline. First in the markup so it reads before the app list. */}
-          <div
-            ref={copyRef}
-            className="m-hero-copy absolute inset-x-0 top-0 z-[3] px-6 text-center text-[#ededf3]"
-          >
-            <div ref={copyInnerRef} className="origin-top">
-              <h1 className="m-h1 mx-auto max-w-[760px] text-balance">Your idea is the limit</h1>
-              <p className="m-hero-sub mx-auto mt-3 max-w-[560px] text-[17px] leading-[1.35] text-[#ededf3] sm:text-[20px]">
-                One-on-one sessions where your high schooler builds and launches
-                a real web or iOS app, and learns AI skills like automations and
-                MCP servers along the way.
-              </p>
-              <form
-                ref={formRef}
-                onSubmit={onSubmit}
-                className="m-hero-form mx-auto mt-7 flex max-w-[520px] flex-col items-stretch justify-center gap-2 sm:flex-row sm:items-center"
+        <div ref={stageRef} className="m-hero-stage m-th w-full bg-[var(--bg)] text-[var(--fg)]">
+          <div ref={viewRef} className="m-hero-view">
+            {/* Photo */}
+            <div ref={sceneRef} className="absolute inset-0" aria-hidden>
+              <div
+                className="absolute left-1/2 aspect-[3/2] w-[max(100vw,150svh)] -translate-x-1/2 bg-[#b9a9c4]"
+                style={{ top: `calc((100svh - max(100vw, 150svh) / 1.5) * ${ANCHOR_Y})` }}
               >
-                <div className="flex h-10 items-center rounded-full bg-[rgba(120,118,150,0.5)] pl-5 transition-colors duration-300 focus-within:bg-[rgba(120,118,150,0.62)]">
-                  <label htmlFor="hero-email" className="sr-only">
-                    Your email
-                  </label>
-                  <input
-                    id="hero-email"
-                    name="email"
-                    type="email"
-                    autoComplete="email"
-                    placeholder="Your email"
-                    className="m-hero-input h-full min-w-0 flex-1 bg-transparent text-[16px] text-[#ededf3] outline-none placeholder:text-[#ededf3]/80 sm:w-[170px] sm:flex-none"
-                  />
-                  <button type="submit" className="m-btn m-btn-primary shrink-0">
-                    Book a session
-                  </button>
-                </div>
-                <a
-                  href="#pricing"
-                  className="m-btn shrink-0 bg-[rgba(120,118,150,0.5)] text-[#ededf3] hover:bg-[rgba(120,118,150,0.62)]"
-                >
-                  See pricing
-                </a>
-              </form>
+                <Image
+                  ref={photoRef}
+                  src={overlook}
+                  alt=""
+                  fill
+                  preload
+                  placeholder="blur"
+                  onLoad={() => setPhotoReady(true)}
+                  sizes="(max-width: 640px) 80vh, (max-aspect-ratio: 3/2) 150vh, 100vw"
+                  className="object-cover"
+                />
+              </div>
             </div>
-          </div>
 
-          {/* Docked layout: list of apps on the left, panel slot on the right */}
-          {!reduced && (
-            <div className="m-dock">
-              <div className="m-wrap m-dock-grid">
-                <div ref={slotRef} className="m-dock-slot" />
-                <div
-                  ref={leftRef}
-                  className="m-dock-col"
-                  style={{ opacity: 0, pointerEvents: "none" }}
-                >
-                  <div ref={leftInnerRef}>
-                    <BuiltColumn active={active} onSelect={setActive} auto={docked} />
-                  </div>
+            {/* The zoomed view of the photo, painted while the camera pushes in */}
+            <canvas
+              ref={canvasRef}
+              aria-hidden
+              className="pointer-events-none absolute inset-0 h-full w-full"
+              style={{ visibility: "hidden" }}
+            />
+
+            {/* Dusk tint so the headline reads, and edges that fall away into the page */}
+            <div ref={shadeRef} aria-hidden className="m-hero-shade pointer-events-none absolute inset-0" />
+            {/* A soft, feathered blur behind the headline */}
+            <div ref={hazeRef} aria-hidden className="m-hero-haze pointer-events-none absolute" />
+
+            {/* The laptop's own screen, for when the panel has moved on to the app list */}
+            <div
+              ref={laptopRef}
+              aria-hidden
+              className="absolute grid place-items-center rounded-[1.5px] bg-white"
+              style={{ opacity: 0 }}
+            >
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src="/hero/common-app.svg" alt="" className="w-[52%]" />
+            </div>
+
+            {/* Headline. First in the markup so it reads before the app list. */}
+            <div
+              ref={copyRef}
+              className="m-hero-copy absolute inset-x-0 top-0 z-[3] px-4 text-center text-[#ededf3] sm:px-6"
+            >
+              <div ref={copyInnerRef} className="origin-top">
+                <h1 className="m-h1 mx-auto max-w-[760px] text-balance">Your ambition is the limit</h1>
+                <p className="m-hero-sub mx-auto mt-3 max-w-[520px] text-balance text-[17px] leading-[1.35] text-[#ededf3] sm:text-[20px]">
+                  One-on-one sessions where your high schooler builds and
+                  launches a real web or iOS app.
+                </p>
+                <div ref={ctaRef} className="m-hero-cta">
+                  <HeroChat />
                 </div>
               </div>
             </div>
-          )}
+          </div>
+
+          {/* The app list on the left, the panel's slot on the right */}
+          <div ref={dockRef} className="m-dock">
+            <div className="m-wrap m-dock-grid">
+              <div ref={slotRef} className="m-dock-slot">
+                <noscript>
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={PROJECTS[0].image}
+                    alt={`${PROJECTS[0].title} screenshot`}
+                    className="h-full w-full rounded-xl object-cover object-top"
+                  />
+                </noscript>
+              </div>
+              <div
+                ref={leftRef}
+                className="m-dock-col"
+                style={{ opacity: 0, pointerEvents: "none" }}
+              >
+                <div ref={leftInnerRef}>
+                  <BuiltColumn active={active} onSelect={setActive} auto={docked} />
+                </div>
+              </div>
+            </div>
+          </div>
 
           {/* The laptop screen. One element for the whole sequence. */}
           <div
@@ -440,37 +608,23 @@ export function Hero() {
               className="absolute inset-0 transition-opacity duration-500"
               style={{ opacity: photoReady || docked ? 1 : 0 }}
             >
-              <AppPanel active={active} loadAll={photoReady} />
+              <PaintedPanel projects={PROJECTS} active={active} play={painting} />
+              {/* What the laptop shows before the painter starts */}
+              <div
+                ref={coverRef}
+                aria-hidden
+                className="pointer-events-none absolute inset-0 grid place-items-center overflow-hidden rounded-xl bg-white"
+              >
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img ref={coverLogoRef} src="/hero/common-app.svg" alt="" className="w-[52%]" />
+              </div>
             </div>
           </div>
-
-          <p
-            ref={noteRef}
-            className="m-hero-note pointer-events-none absolute inset-x-0 bottom-6 mx-auto w-fit max-w-[calc(100vw-32px)] rounded-lg bg-[rgba(23,23,33,0.8)] px-4 py-2.5 text-center text-[12px] leading-[1.35] tracking-[0.02em] text-[#ededf3] sm:text-[13px]"
-          >
-            In person in Chappaqua and Westchester, or over Zoom year-round.
-          </p>
         </div>
 
-        {/* #work lands on the end of the sequence, with the panel docked */}
-        {!reduced && (
-          <div id="work" className="pointer-events-none absolute bottom-0 h-[100svh] w-px" />
-        )}
+        {/* #work lands on the second screen, the app list */}
+        <div id="work" className="pointer-events-none absolute bottom-0 h-[100svh] w-px" />
       </section>
-
-      {/* Without motion, the same content is a plain section */}
-      {reduced && (
-        <section id="work" data-section-theme="dark" className="scroll-mt-[72px] py-24">
-          <div className="m-wrap grid items-center gap-8 lg:grid-cols-[minmax(0,0.85fr)_minmax(0,1fr)] lg:gap-16">
-            <div className="relative aspect-[16/10] w-full lg:order-2">
-              <AppPanel active={active} />
-            </div>
-            <div className="lg:order-1">
-              <BuiltColumn active={active} onSelect={setActive} auto={false} />
-            </div>
-          </div>
-        </section>
-      )}
     </>
   );
 }
@@ -489,15 +643,12 @@ function BuiltColumn({
       <h2 className="m-dock-title max-w-[400px] text-[22px] font-[480] leading-[1.25] sm:text-[24px]">
         I build with these tools every day.
       </h2>
-      <p className="m-th m-hide-short mt-2 max-w-[400px] text-[16px] leading-[1.4] text-[var(--muted)] max-lg:hidden">
-        Everything here was built with the same tools your student will use.
-      </p>
       <div className="m-dock-tabs mt-5 lg:mt-8">
         <TabList
           active={active}
           onSelect={onSelect}
           auto={auto}
-          duration={7}
+          duration={8}
           items={PROJECTS.map((p) => ({
             key: p.title,
             title: p.title,
@@ -523,31 +674,6 @@ function BuiltColumn({
       >
         Book a session
       </Link>
-    </div>
-  );
-}
-
-/* The app screen: crossfades between the real screenshots. The first loads
-   with the page; the rest follow as soon as the hero photo is in, so switching
-   apps never shows an empty panel and nothing competes with the first paint. */
-function AppPanel({ active, loadAll = true }: { active: number; loadAll?: boolean }) {
-  return (
-    <div className="absolute inset-0 overflow-hidden rounded-xl bg-[#272735] shadow-[0_40px_80px_-40px_rgba(0,0,0,0.7)] ring-1 ring-white/10">
-      {PROJECTS.map((p, i) =>
-        i === 0 || i === active || loadAll ? (
-          <Image
-            key={p.image}
-            src={p.image}
-            alt={i === active ? `${p.title} screenshot` : ""}
-            fill
-            sizes="(max-width: 640px) 92vw, (max-width: 1024px) 60vw, 1160px"
-            loading="eager"
-            fetchPriority={i === 0 ? "auto" : "low"}
-            className="object-cover object-top transition-opacity duration-500 ease-[cubic-bezier(0,0,0.2,1)]"
-            style={{ opacity: i === active ? 1 : 0 }}
-          />
-        ) : null
-      )}
     </div>
   );
 }

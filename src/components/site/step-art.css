@@ -1,0 +1,226 @@
+/* Sessions section: per-step wireframe art beside the timeline line.
+   Everything here is prefixed sa- so it cannot collide with other pieces. */
+
+/* The panel is a size container so the art can size itself to the half-panel */
+.sa-panel {
+  container-type: inline-size;
+}
+
+/* One slot per step, on the opposite side of the line from that step's card,
+   centred on its dot and clamped so it never leaves the panel. */
+.sa-slot {
+  --sa-w: min(200px, calc(50cqw - 34px));
+  --sa-h: calc(var(--sa-w) * 0.75);
+  position: absolute;
+  width: var(--sa-w);
+  height: var(--sa-h);
+  top: clamp(16px, calc(var(--sa-top) - var(--sa-h) / 2), calc(100% - var(--sa-h) - 16px));
+  opacity: 0;
+  /* The outgoing drawing clears quickly so it never sits under the next card */
+  transition: opacity 0.15s var(--m-ease, cubic-bezier(0, 0, 0.2, 1));
+  pointer-events: none;
+}
+.sa-slot[data-side="left"] {
+  right: calc(50% + 20px);
+}
+.sa-slot[data-side="right"] {
+  left: calc(50% + 20px);
+}
+.sa-slot[data-on="true"] {
+  opacity: 1;
+  transition-duration: 0.45s;
+  /* Waits for the outgoing card on this side to clear (it fades in 150ms) */
+  transition-delay: 0.16s;
+}
+
+.sa-art {
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  --sa-sw: 1.5px;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.sa-art .sa-s {
+  stroke-width: var(--sa-sw);
+}
+.sa-art .sa-s2 {
+  stroke-width: calc(var(--sa-sw) * 1.35);
+}
+.sa-txt {
+  font-family: var(--font-site), system-ui, sans-serif;
+  font-weight: 560;
+  letter-spacing: 0.01em;
+}
+/* Short labels only show while the art is near full size; a bar stands in below that */
+.sa-lblalt {
+  display: none;
+}
+
+/* Keep strokes about 1.2px on screen as the art shrinks */
+@container (max-width: 440px) {
+  .sa-art {
+    --sa-sw: 1.8px;
+  }
+  .sa-lbl {
+    display: none;
+  }
+  .sa-lblalt {
+    display: inline;
+  }
+}
+@container (max-width: 330px) {
+  .sa-art {
+    --sa-sw: 2.4px;
+  }
+}
+
+/* ---------- Draw-in (only while the step is active) ---------- */
+@keyframes sa-draw {
+  from {
+    stroke-dasharray: 100 100;
+    stroke-dashoffset: 100;
+  }
+  to {
+    stroke-dasharray: 100 100;
+    stroke-dashoffset: 0;
+  }
+}
+@keyframes sa-fade {
+  from {
+    opacity: 0;
+    transform: translateY(3px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes sa-pop {
+  0% {
+    opacity: 0;
+    transform: scale(0.5);
+  }
+  60% {
+    opacity: 1;
+    transform: scale(1.12);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+@keyframes sa-fill {
+  from {
+    fill-opacity: 0;
+  }
+}
+@keyframes sa-ph {
+  0% {
+    opacity: 0;
+  }
+  12%,
+  80% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+@keyframes sa-blink {
+  0%,
+  49% {
+    opacity: 1;
+  }
+  50%,
+  100% {
+    opacity: 0;
+  }
+}
+@keyframes sa-pulse {
+  0% {
+    opacity: 0.6;
+    transform: scale(1);
+  }
+  70%,
+  100% {
+    opacity: 0;
+    transform: scale(2.8);
+  }
+}
+@keyframes sa-flow {
+  0% {
+    stroke-dashoffset: 100;
+    opacity: 0;
+  }
+  10%,
+  85% {
+    opacity: 1;
+  }
+  100% {
+    stroke-dashoffset: 0;
+    opacity: 0;
+  }
+}
+
+.sa-art .sa-f,
+.sa-art .sa-p {
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+.sa-play .sa-d {
+  animation: sa-draw 0.6s cubic-bezier(0.65, 0.05, 0.36, 1) var(--sa-delay, 0ms) backwards;
+}
+.sa-play .sa-f {
+  animation: sa-fade 0.4s var(--m-ease, cubic-bezier(0, 0, 0.2, 1)) var(--sa-delay, 0ms) backwards;
+}
+.sa-play .sa-p {
+  animation: sa-pop 0.42s var(--m-ease, cubic-bezier(0, 0, 0.2, 1)) var(--sa-delay, 0ms) backwards;
+}
+.sa-play .sa-fl {
+  animation: sa-fill 0.35s var(--m-ease, cubic-bezier(0, 0, 0.2, 1)) var(--sa-delay, 0ms) backwards;
+}
+
+/* Placeholder outlines in the Build drawing: only seen during the draw-in */
+.sa-ph {
+  opacity: 0;
+}
+.sa-play .sa-ph {
+  animation: sa-ph var(--sa-dur, 600ms) linear backwards;
+}
+
+/* Looping details, one per drawing at most, after the draw-in */
+.sa-play .sa-blink {
+  animation: sa-blink 1.1s linear 0.9s infinite;
+}
+.sa-pulse {
+  opacity: 0;
+  transform-box: fill-box;
+  transform-origin: center;
+}
+.sa-play .sa-pulse {
+  animation: sa-pulse 2.2s var(--m-ease, cubic-bezier(0, 0, 0.2, 1)) 0.9s infinite;
+}
+.sa-flow {
+  opacity: 0;
+  stroke-dasharray: 9 91;
+}
+.sa-play .sa-flow {
+  animation: sa-flow 2.4s linear 0.9s infinite backwards;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sa-slot {
+    transition: none;
+  }
+  .sa-art *,
+  .sa-play * {
+    animation: none !important;
+  }
+  .sa-flow,
+  .sa-pulse {
+    opacity: 0 !important;
+  }
+}

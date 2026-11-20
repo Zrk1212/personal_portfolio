@@ -5,6 +5,10 @@ import zacPhoto from "../../../public/about/zac.jpg";
 
 /* ---------------- Pricing ---------------- */
 
+// Row padding-top that matches the "Best value" chip (20px) + its gap (8px),
+// so the length and single price line up with the bundle price below the chip.
+const PR_BEST_PT = "pt-[48px]";
+
 export function Pricing() {
   return (
     <section id="pricing" data-section-theme="dark" className="scroll-mt-[72px] pb-14 pt-24 sm:pb-16 sm:pt-28">
@@ -13,8 +17,8 @@ export function Pricing() {
           Simple pricing, by the session.
         </h2>
         <p className="m-body m-th mx-auto mt-5 max-w-[520px] text-center" style={{ color: "var(--muted)" }}>
-          One session alone rarely gets to a live app, so most students start
-          with a bundle of five, one session for each step.
+          With a bundle of 5, students will build an entire online business
+          they can put on their Common Application.
         </p>
 
         <div className="mt-14 grid gap-8 md:grid-cols-2">
@@ -24,14 +28,7 @@ export function Pricing() {
               className="m-th flex flex-col rounded-xl p-6 sm:p-8"
               style={{ backgroundColor: "var(--tile)" }}
             >
-              <div className="flex flex-wrap items-center justify-between gap-3">
-                <h3 className="m-h3">{t.track}</h3>
-                {t.featured && (
-                  <span className="rounded-full bg-[var(--m-indigo)] px-3 py-1.5 text-[13px] font-[480] text-white">
-                    Most students start here
-                  </span>
-                )}
-              </div>
+              <h3 className="m-h3">{t.track}</h3>
               <p className="m-body m-th mt-2 max-w-[420px]" style={{ color: "var(--muted)" }}>
                 {t.blurb}
               </p>
@@ -54,14 +51,28 @@ export function Pricing() {
                 <tbody>
                   {t.rows.map((r) => (
                     <tr key={r.length} className="m-th border-t" style={{ borderColor: "var(--rule)" }}>
-                      <th scope="row" className="whitespace-nowrap py-5 pr-2 align-top text-[16px] font-[480] max-[359px]:text-[14px]">
+                      <th
+                        scope="row"
+                        className={`whitespace-nowrap pb-5 pr-2 align-top text-[16px] font-[480] max-[359px]:text-[14px] ${r.best ? PR_BEST_PT : "pt-5"}`}
+                      >
                         {r.length}
                       </th>
-                      <td className="py-5 text-right align-top text-[26px] font-[480] leading-none tracking-[-0.01em] max-[359px]:text-[21px] sm:text-[30px]">
+                      <td
+                        className={`pb-5 text-right align-top text-[26px] font-[480] leading-none tracking-[-0.01em] max-[359px]:text-[21px] sm:text-[30px] ${r.best ? PR_BEST_PT : "pt-5"}`}
+                      >
                         {r.single}
                       </td>
                       <td className="py-5 pl-3 text-right align-top">
-                        <span className="block text-[26px] font-[480] leading-none tracking-[-0.01em] max-[359px]:text-[21px] sm:text-[30px]">
+                        {r.best && (
+                          <span
+                            className="mb-2 ml-auto flex h-5 w-fit items-center rounded-full bg-[var(--m-indigo)] px-2 text-[11px] font-[500] leading-none tracking-[0.01em] text-white"
+                          >
+                            Best value
+                          </span>
+                        )}
+                        <span
+                          className={`block text-[26px] font-[480] leading-none tracking-[-0.01em] max-[359px]:text-[21px] sm:text-[30px] ${r.best ? "pr-best m-th" : ""}`}
+                        >
                           {r.bundle}
                         </span>
                         <span className="m-th mt-1.5 block text-[13px]" style={{ color: "var(--muted)" }}>
@@ -82,9 +93,6 @@ export function Pricing() {
             </div>
           ))}
         </div>
-        <p className="m-th mt-6 text-center text-[14px]" style={{ color: "var(--muted)" }}>
-          A bundle is five sessions of the same length.
-        </p>
       </div>
     </section>
   );
@@ -116,28 +124,20 @@ export function About() {
             </h2>
             <div className="m-body m-th mt-5 max-w-[480px] space-y-4" style={{ color: "var(--muted)" }}>
               <p>
-                I&apos;m a student at UVA from Chappaqua, and I build and ship
-                apps with AI. Vantage Recruiting is live on the App Store with
-                paying users, and Hoos Planner helps UVA students plan their
-                schedules.
+                I&apos;m a student at UVA from Chappaqua, NY. I&apos;ve built and
+                shipped multiple online businesses with AI. My proudest venture
+                is Vantage Recruiting, an AI lacrosse recruiting tool that&apos;s
+                live on the App Store with 100+ paying users. I&apos;m always
+                looking for pain points to solve with AI.
               </p>
               <p>
-                I teach the exact tools I use every week, one-on-one, at your
-                student&apos;s pace.
+                I&apos;ll teach the exact tools I use every week, one-on-one, at
+                your student&apos;s pace. They&apos;ll get real, hands-on
+                experience building a business they can use on their college
+                application.
               </p>
             </div>
             {/* TODO: add a parent or student testimonial here once you have one. */}
-            <div className="mt-8 flex flex-wrap gap-2">
-              {["UVA", "From Chappaqua", "Claude Code", "iOS + web"].map((t) => (
-                <span
-                  key={t}
-                  className="m-th rounded-full px-4 py-2 text-[14px] font-[440]"
-                  style={{ backgroundColor: "var(--pill)" }}
-                >
-                  {t}
-                </span>
-              ))}
-            </div>
           </div>
         </div>
       </div>

@@ -1,0 +1,128 @@
+/* ----------------------------------------------------------------
+   Painter panel: a white canvas that a small helper paints the app
+   screenshots onto. Everything here is prefixed pt-.
+----------------------------------------------------------------- */
+
+.pt-panel {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  border-radius: 0.75rem;
+  background: #fff;
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.1),
+    0 40px 80px -40px rgba(0, 0, 0, 0.7);
+}
+
+/* The painting, and the wet sheen that dries on top of it */
+.pt-canvas,
+.pt-wet {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+/* ---------- The helper ---------- */
+.pt-bot {
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: block;
+  overflow: visible;
+  pointer-events: none;
+  opacity: 0;
+  transform-origin: 50% 50%;
+}
+.pt-live .pt-bot {
+  opacity: 1;
+}
+
+.pt-blink,
+.pt-breathe,
+.pt-sway {
+  transform-box: fill-box;
+}
+
+/* A blink now and then, painting or resting */
+.pt-live .pt-blink {
+  transform-origin: 50% 55%;
+  animation: pt-blink 5.4s linear infinite;
+}
+@keyframes pt-blink {
+  0%,
+  43.5%,
+  46.5%,
+  91%,
+  93.2%,
+  95.2%,
+  97.4%,
+  100% {
+    transform: scaleY(1);
+  }
+  45% {
+    transform: scaleY(0.08);
+  }
+  92.1%,
+  96.3% {
+    transform: scaleY(0.08);
+  }
+}
+
+/* Resting in the corner: slow breathing, and the brush moves with it */
+.pt-idle .pt-breathe {
+  transform-origin: 50% 100%;
+  animation: pt-breathe 3.4s ease-in-out infinite;
+}
+@keyframes pt-breathe {
+  0%,
+  100% {
+    transform: scale(1, 1);
+  }
+  50% {
+    transform: scale(1.022, 0.962);
+  }
+}
+.pt-idle .pt-sway {
+  animation: pt-sway 3.4s ease-in-out infinite;
+}
+@keyframes pt-sway {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(1.6px);
+  }
+}
+
+/* Off screen: nothing ticks */
+.pt-paused .pt-blink,
+.pt-paused .pt-breathe,
+.pt-paused .pt-sway {
+  animation-play-state: paused;
+}
+
+/* ---------- Without motion (or without canvas): a plain crossfade ---------- */
+.pt-shot {
+  object-fit: cover;
+  object-position: top;
+  opacity: 0;
+  /* the outgoing shot stays put until the new one has covered it */
+  transition: opacity 0s linear 0.5s;
+}
+.pt-shot[data-on] {
+  z-index: 1;
+  opacity: 1;
+  transition: opacity 0.5s cubic-bezier(0, 0, 0.2, 1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pt-blink,
+  .pt-breathe,
+  .pt-sway {
+    animation: none !important;
+  }
+}
