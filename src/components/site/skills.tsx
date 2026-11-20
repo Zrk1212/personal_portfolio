@@ -27,7 +27,7 @@ function PlanArt() {
   const rows = ["What the app does", "Who it's for", "The three main screens", "What we build first"];
   return (
     <div className={`${card} w-[64%] p-5`}>
-      <div className={`${muted} font-[family-name:var(--font-geist-mono)] text-[12px]`}>plan.md</div>
+      <div className={`${muted} font-[family-name:var(--font-geist-mono)] text-[12px]`}>PRD.md</div>
       <div className="mt-3 space-y-2.5">
         {rows.map((r, i) => (
           <div key={r} className="m-step flex items-center gap-2.5 text-[14px]" style={delay(0.5 + i * 0.9)}>

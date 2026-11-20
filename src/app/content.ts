@@ -5,7 +5,7 @@
 export const SKILLS = [
   {
     title: "A written plan",
-    body: "Turning their idea into a clear plan an AI can build from.",
+    body: "Turning their idea into a PRD: a clear, written plan an AI can build from.",
   },
   {
     title: "Building with Claude Code",
@@ -112,26 +112,37 @@ export const PROJECTS: Project[] = [
   },
 ];
 
+// The five steps. A bundle of five gives each step its own session.
 export const PROCESS = [
   {
     no: "01",
-    title: "Idea and plan",
-    body: "They pick an idea they care about, and we turn it into a written plan.",
+    title: "Business model",
+    body: "They start with something they care about and shape it into a business: who it's for, what problem it solves and how it could make money.",
+    outcome: "A one-page business model",
   },
   {
     no: "02",
-    title: "Build",
-    body: "They build the core of the app with Claude Code, one working piece at a time.",
+    title: "PRD and design",
+    body: "They write a PRD, a plain-English plan of what the app does that the AI builds from. I send a set of sites and apps, and they pick the look they like.",
+    outcome: "A PRD and a design to follow",
   },
   {
     no: "03",
-    title: "AI feature and tools",
-    body: "They add an AI feature and set up an automation, a skill or an MCP connection.",
+    title: "Build",
+    body: "They build the core of the app with Claude Code, one working piece at a time, following their PRD and design picks.",
+    outcome: "A working first version",
   },
   {
     no: "04",
+    title: "AI feature and tools",
+    body: "They add an AI feature and set up an automation, a skill or an MCP connection.",
+    outcome: "An AI feature and one automation",
+  },
+  {
+    no: "05",
     title: "Launch and demo",
     body: "The app goes live with a real link, or onto their iPhone through TestFlight. The session ends with your student showing it to you.",
+    outcome: "A live app with its own link",
   },
 ];
 

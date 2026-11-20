@@ -9,9 +9,6 @@ import { TabList, usePrefersReducedMotion } from "./shell";
 
 /* ---------------- How the 4 sessions go ---------------- */
 
-// What the student walks away with after each step
-const OUTCOMES = ["plan.md", "A working first version", "An AI feature and one automation", "your-app.vercel.app"];
-
 export function Sessions() {
   const [active, setActive] = useState(0);
   const [inView, setInView] = useState(false);
@@ -37,11 +34,11 @@ export function Sessions() {
       <div className="m-wrap grid gap-10 md:grid-cols-2 md:gap-8">
         <div className="flex flex-col">
           <h2 className="m-h3 max-w-[440px] text-balance" style={{ fontSize: "clamp(24px, 2.3vw, 33px)" }}>
-            From idea to a live app in four steps.
+            From idea to a live app in five steps.
           </h2>
           <p className="m-body m-th mt-4 max-w-[440px]" style={{ color: "var(--muted)" }}>
-            Sessions are one-on-one, 30 minutes or an hour. The last one ends
-            with your student showing you the finished app.
+            A bundle of five gives each step its own one-on-one session. The
+            last one ends with your student showing you the finished app.
           </p>
           <div className="mt-10 md:mt-auto md:pt-16">
             <TabList
@@ -65,8 +62,8 @@ export function Sessions() {
           </div>
         </div>
 
-        {/* Path visual: four stops on one line, the active one lit */}
-        <div className="relative aspect-[4/5] overflow-hidden rounded-xl bg-[#383b4b] text-[#ededf3] md:aspect-auto md:min-h-[580px]">
+        {/* Path visual: one stop per step on a single line, the active one lit */}
+        <div className="relative h-[420px] w-full overflow-hidden rounded-xl bg-[#383b4b] text-[#ededf3] md:h-auto md:min-h-[580px]">
           <div
             aria-hidden
             className="absolute inset-x-0 bottom-0 h-[46%]"
@@ -85,6 +82,8 @@ export function Sessions() {
             const on = i === active;
             const top = 14 + (i / (PROCESS.length - 1)) * 72;
             const right = i % 2 === 0; // cards alternate sides of the line
+            // The first and last cards lean inward so they stay inside the panel
+            const lift = i === 0 ? -28 : i === PROCESS.length - 1 ? -72 : -50;
             return (
               <div key={s.no}>
                 <div
@@ -112,11 +111,11 @@ export function Sessions() {
                     }`}
                     style={{
                       opacity: on ? 1 : 0,
-                      transform: `translateY(-50%) translateX(${on ? 0 : right ? -8 : 8}px)`,
+                      transform: `translateY(${lift}%) translateX(${on ? 0 : right ? -8 : 8}px)`,
                     }}
                   >
                     <div className="text-[12px] text-[#c3c3cc]">After step {i + 1}</div>
-                    <div className="mt-0.5 break-words text-[15px] leading-[1.3]">{OUTCOMES[i]}</div>
+                    <div className="mt-0.5 break-words text-[15px] leading-[1.3]">{s.outcome}</div>
                   </div>
                 </div>
               </div>
@@ -139,7 +138,7 @@ export function Pricing() {
         </h2>
         <p className="m-body m-th mx-auto mt-5 max-w-[520px] text-center" style={{ color: "var(--muted)" }}>
           One session alone rarely gets to a live app, so most students start
-          with a bundle of five.
+          with a bundle of five, one session for each step.
         </p>
 
         <div className="mt-14 grid gap-8 md:grid-cols-2">
