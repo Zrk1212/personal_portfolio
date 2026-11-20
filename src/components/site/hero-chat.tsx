@@ -86,7 +86,8 @@ export function HeroChat() {
   }, [reduced]);
 
   return (
-    <Link ref={rootRef} href="/contact" aria-label="Book a session" className="m-chat m-focus">
+    <Link ref={rootRef} href="/contact" className="m-chat m-focus">
+      <span className="sr-only">Book a session</span>
       <LogoMark className="m-chat-spark" />
       <span className="m-chat-line" aria-hidden>
         {/* Holds the bar at the width of the longest line so nothing shifts */}
