@@ -2,7 +2,10 @@ import type { Metadata, Viewport } from "next";
 import { SiteShell } from "@/components/site/shell";
 import { Hero } from "@/components/site/hero";
 import { Skills } from "@/components/site/skills";
-import { About, Closing, Faq, Pricing, Sessions } from "@/components/site/sections";
+import { Sessions } from "@/components/site/sessions";
+import { About, Pricing } from "@/components/site/sections";
+import { Faq } from "@/components/site/faq";
+import { Closing } from "@/components/site/closing";
 
 export const metadata: Metadata = {
   alternates: { canonical: "/" },
