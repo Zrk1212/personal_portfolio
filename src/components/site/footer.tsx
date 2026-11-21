@@ -112,8 +112,32 @@ export function Footer({ home }: { home: boolean }) {
             ))}
           </nav>
         </div>
-        <p className="m-th text-[13px]" style={{ color: "var(--muted)" }}>
-          © 2026 Zac Klein
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-baseline sm:justify-between sm:gap-8">
+          <p className="m-th text-[13px]" style={{ color: "var(--muted)" }}>
+            © 2026 Zac Klein
+          </p>
+          <ul className="flex gap-5 text-[13px]">
+            {(
+              [
+                ["Privacy", "/privacy"],
+                ["Terms", "/terms"],
+              ] as FooterLink[]
+            ).map(([label, href]) => (
+              <li key={href}>
+                <Link
+                  href={href}
+                  className="m-focus m-th inline-block rounded py-1.5 underline decoration-[color-mix(in_srgb,currentColor_40%,transparent)] underline-offset-4 transition-colors duration-150 hover:text-[var(--fg)]! hover:decoration-current"
+                  style={{ color: "var(--muted)" }}
+                >
+                  {label}
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </div>
+        <p className="m-th mt-3 max-w-[640px] text-[13px] leading-[1.5]" style={{ color: "var(--muted)" }}>
+          Nothing on this site guarantees admission to any college. Not affiliated with or endorsed by
+          any college, Common App or any company named here.
         </p>
       </div>
     </footer>

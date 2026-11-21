@@ -5,21 +5,33 @@ import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { usePrefersReducedMotion } from "./shell";
 
 /* ----------------------------------------------------------------
-   The painter panel. A white canvas, and a small coral helper that
+   The painter panel. A white canvas, and the Claude mark, which
    paints the real app screenshots onto it with a loaded brush.
 
    The painting is a mask: each frame the brush lays down a few dozen
    bristle lines on a scratch canvas, the screenshot is drawn through
-   them, and the result is added to the visible canvas. The helper is
-   an inline SVG moved with a transform. Frames only run while a
-   painting is in progress and the panel is on screen; at rest the
-   helper's breathing and blinking are CSS.
+   them, and the result is added to the visible canvas. The mark is
+   an inline SVG moved with a transform: it travels, turns a few
+   degrees into each sweep, and is otherwise left alone (no face, no
+   limbs, no squash). Frames only run while a painting is in progress
+   and the panel is on screen; at rest its slow bob is CSS.
+
+   Once a site is painted, a short muted loop of that site's hero
+   fades in over the still. Only the project on the canvas ever has
+   a clip loaded.
 ----------------------------------------------------------------- */
 
 type PaintedProject = { title: string; image: string };
 
-const CORAL = "#d97757";
-const CORAL_DEEP = "#b9583c";
+const CORAL = "#D97757"; // the Claude mark's own colour
+
+/* Which screenshots have a moving capture: /work/<slug>.png has
+   /work/clips/<slug>.mp4 (960x600) and <slug>-sm.mp4 (640x400, phones). */
+const CLIP_SLUGS = new Set(["vantage", "hoos-planner", "scent-smart", "bubble", "dr-rob"]);
+function clipFor(image: string) {
+  const slug = image.split("/").pop()?.replace(/\.[a-z0-9]+$/i, "");
+  return slug && CLIP_SLUGS.has(slug) ? `/work/clips/${slug}` : null;
+}
 const BRISTLE = [240, 222, 190]; // an unloaded brush
 
 /* Timing, in seconds */
@@ -41,7 +53,7 @@ const lerp = (a: number, b: number, t: number) => a + (b - a) * t;
 const ease = (t: number) => t * t * (3 - 2 * t);
 /* A sweep slows into its ends without ever stopping dead */
 const sweepEase = (t: number) => 0.2 * t + 0.8 * ease(t);
-const backOut = (t: number) => 1 + 2.4 * Math.pow(t - 1, 3) + 1.4 * Math.pow(t - 1, 2);
+const easeOut = (t: number) => 1 - Math.pow(1 - t, 3);
 
 function hash(n: number) {
   const s = Math.sin(n * 127.1 + 311.7) * 43758.5453;
@@ -135,13 +147,10 @@ function createPainter(root: HTMLDivElement, srcs: string[]): Painter | null {
   const botEl = q<SVGSVGElement>(".pt-bot");
   const brushEl = q<SVGGElement>('[data-pt="brush"]');
   const bodyEl = q<SVGGElement>('[data-pt="body"]');
-  const handEl = q<SVGGElement>('[data-pt="hand"]');
-  const eyesEl = q<SVGGElement>('[data-pt="eyes"]');
-  const legLEl = q<SVGGElement>('[data-pt="leg-l"]');
-  const legREl = q<SVGGElement>('[data-pt="leg-r"]');
+  const video = q<HTMLVideoElement>(".pt-clip");
   const tipPath = q<SVGPathElement>('[data-pt="tip"]');
   if (!canvasEl || !wetEl || !botEl) return null;
-  if (!brushEl || !bodyEl || !handEl || !eyesEl || !legLEl || !legREl || !tipPath) return null;
+  if (!brushEl || !bodyEl || !tipPath) return null;
   const tmp = document.createElement("canvas"); // this frame's brush marks
   const fit = document.createElement("canvas"); // the screenshot, cropped to the panel
   const c1 = canvasEl.getContext("2d");
@@ -155,10 +164,6 @@ function createPainter(root: HTMLDivElement, srcs: string[]): Painter | null {
   const bot = botEl;
   const gBrush = brushEl;
   const gBody = bodyEl;
-  const gHand = handEl;
-  const gEyes = eyesEl;
-  const legL = legLEl;
-  const legR = legREl;
   const tipEl = tipPath;
   const ctx = c1;
   const wctx = c2;
@@ -168,7 +173,7 @@ function createPainter(root: HTMLDivElement, srcs: string[]): Painter | null {
   let W = 0;
   let H = 0;
   let dpr = 1;
-  let bw = 30; // the helper's body width in CSS px
+  let bw = 30; // the mark's width in CSS px
   let idleSc = 1;
   let active = 0;
   let play = false;
@@ -183,24 +188,20 @@ function createPainter(root: HTMLDivElement, srcs: string[]): Painter | null {
   let wetDirty = false;
   let fitW = 0; // width of the file the fitted copy was drawn from
 
-  /* The helper's pose. ang/rad place the brush tip relative to the body. */
+  /* The mark's pose. ang/rad place the brush tip relative to its centre. */
   const p = {
     x: 0,
     y: 0,
     sc: 1,
     ang: -2.1,
     rad: 1.3,
-    lean: 0,
-    q: 0, // squash (+) and stretch (-)
-    qv: 0,
-    walk: 0,
-    stride: 0,
+    lean: 0, // degrees of turn, into the direction of travel
     air: 0,
-    look: 1,
     tint: [...BRISTLE],
   };
 
   /* ---------- images ---------- */
+  const clips = srcs.map(clipFor);
   const slots = srcs.map(() => ({ img: null as HTMLImageElement | null, w: 0, loading: 0 }));
 
   function load(i: number, low = false) {
@@ -342,7 +343,7 @@ function createPainter(root: HTMLDivElement, srcs: string[]): Painter | null {
         wet: 0,
       });
     }
-    // The helper works from just below the stroke, or above it near the bottom
+    // The mark works from just below the stroke, or above it near the bottom
     const reach = 1.25 * bw;
     let bodyY = yc + reach;
     if (bodyY + 0.56 * bw > H - 2) bodyY = yc - reach;
@@ -589,7 +590,7 @@ function createPainter(root: HTMLDivElement, srcs: string[]): Painter | null {
     wetFade = 0;
   }
 
-  /* ---------- the helper ---------- */
+  /* ---------- the mark ---------- */
   function idlePose(): Pose {
     const pad = Math.max(6, W * 0.014);
     return {
@@ -621,7 +622,7 @@ function createPainter(root: HTMLDivElement, srcs: string[]): Painter | null {
     p.ang = to.ang;
     p.rad = to.rad;
   }
-  /* A hop from one pose to another; the brush swings round rather than through */
+  /* A lift from one pose to another; the brush swings round rather than through */
   function hop(from: Pose, to: Pose, f: number, clockwise: boolean) {
     const e = ease(f);
     const dist = Math.hypot(to.x - from.x, to.y - from.y);
@@ -667,10 +668,7 @@ function createPainter(root: HTMLDivElement, srcs: string[]): Painter | null {
         lerp(st.bodyY, nx.bodyY, e) +
         (tipY - lerp(st.yc, nx.yc, e)) * 0.6 -
         Math.sin(Math.PI * g) * 0.1 * bw;
-      if (j.turn !== k) {
-        j.turn = k;
-        p.qv += 3.4; // squash into the turn
-      }
+      j.turn = k;
     }
     const mx = 0.6 * bw;
     const tx = clamp(tipX - st.dir * 0.12 * bw, mx, W - mx);
@@ -698,25 +696,12 @@ function createPainter(root: HTMLDivElement, srcs: string[]): Painter | null {
     const sin = Math.sin(p.ang);
     const ox = cos * p.rad * 100;
     const oy = sin * p.rad * 100;
-    // the mitt rides the edge of the body, on the side the brush is on
-    const hx = cos * 53;
-    const hy = sin * 44 - 1;
-    const a = (Math.atan2(oy - hy, ox - hx) * 180) / Math.PI;
+    // The handle runs straight back from the tip to the middle of the mark,
+    // which is drawn over it: the brush is carried like one more ray.
+    const a = (p.ang * 180) / Math.PI;
     gBrush.setAttribute("transform", `translate(${ox.toFixed(2)} ${oy.toFixed(2)}) rotate(${a.toFixed(2)})`);
-    gHand.setAttribute("transform", `translate(${hx.toFixed(2)} ${hy.toFixed(2)}) rotate(${a.toFixed(2)})`);
-    const q = p.q - p.air * 0.07;
-    gBody.setAttribute(
-      "transform",
-      `rotate(${p.lean.toFixed(2)} 0 50) translate(0 50) scale(${(1 + q * 0.7).toFixed(4)} ${(1 - q).toFixed(4)}) translate(0 -50)`
-    );
-    gEyes.setAttribute(
-      "transform",
-      `translate(${(cos * 4.6 * p.look).toFixed(2)} ${(sin * 3.4 * p.look).toFixed(2)})`
-    );
-    const liftL = Math.max(0, Math.sin(p.walk)) * 8 * p.stride - p.air * 3;
-    const liftR = Math.max(0, -Math.sin(p.walk)) * 8 * p.stride - p.air * 3;
-    legL.setAttribute("transform", `translate(0 ${(-liftL).toFixed(2)})`);
-    legR.setAttribute("transform", `translate(0 ${(-liftR).toFixed(2)})`);
+    // The mark itself only ever turns, about its own centre
+    gBody.setAttribute("transform", `rotate(${p.lean.toFixed(2)})`);
     tipEl.style.fill = `rgb(${Math.round(p.tint[0])},${Math.round(p.tint[1])},${Math.round(p.tint[2])})`;
   }
 
@@ -732,26 +717,23 @@ function createPainter(root: HTMLDivElement, srcs: string[]): Painter | null {
     if (t < j.enter) {
       const f = t / j.enter;
       if (j.pop) {
-        // Pop up with the brush held high, then reach out to the first stroke
+        // Appear with the brush held high, then reach out to the first stroke
         setPose(j.start);
         const e = ease(clamp((f - 0.35) / 0.65));
-        p.sc = Math.max(0.01, backOut(clamp(f / 0.7)));
+        p.sc = Math.max(0.01, easeOut(clamp(f / 0.7)));
         p.ang = lerp(-2.0, j.start.ang, e);
         p.rad = lerp(1.3, j.start.rad, e);
       } else {
         hop(j.from, j.start, f, false);
       }
-      p.look = Math.min(1, p.look + dt * 5);
     } else if (t < j.enter + PAINT) {
       if (!j.painting) {
         j.painting = true;
         setPose(j.start);
-        if (!j.pop) p.qv += 3.5; // landing
       }
       const tau = t - j.enter;
       paint(j, tau);
       drive(j, tau, dt);
-      p.look = Math.min(1, p.look + dt * 5);
     } else {
       if (!j.committed) {
         // Finish every pass, then lay the whole screenshot in, so no pinhole
@@ -769,13 +751,9 @@ function createPainter(root: HTMLDivElement, srcs: string[]): Painter | null {
       if (f < 1 && j.out) {
         hop(j.out, idle, f, true);
       } else {
-        if (!j.landed) {
-          j.landed = true;
-          p.qv += 4.2;
-        }
+        j.landed = true;
         setPose(idle);
         p.air = 0;
-        p.look = Math.max(0, p.look - dt * 3.5);
       }
       if (t > j.enter + PAINT + EXIT + SETTLE) {
         rest();
@@ -783,15 +761,11 @@ function createPainter(root: HTMLDivElement, srcs: string[]): Painter | null {
       }
     }
 
-    // Secondary motion: lean into the travel, scurry, squash and recover
-    const vx = (p.x - x0) / Math.max(dt, 0.001) / bw; // body widths per second
-    const leanTo = clamp(vx / 24, -1, 1) * 13;
-    p.lean += (leanTo - p.lean) * (1 - Math.exp(-dt / 0.06));
-    const speed = Math.abs(vx);
-    p.stride += (clamp(speed / 3) * (1 - p.air) - p.stride) * (1 - Math.exp(-dt / 0.08));
-    p.walk += Math.min(speed / 0.5, 11) * Math.PI * 2 * dt;
-    p.qv += (-576 * p.q - 2 * 0.42 * 24 * p.qv) * dt;
-    p.q = clamp(p.q + p.qv * dt, -0.2, 0.22);
+    // The only secondary motion: a few degrees of turn into the travel,
+    // which comes back to level as soon as the mark stops
+    const vx = (p.x - x0) / Math.max(dt, 0.001) / bw; // mark widths per second
+    const leanTo = clamp(vx / 24, -1, 1) * 9;
+    p.lean += (leanTo - p.lean) * (1 - Math.exp(-dt / 0.07));
     renderBot();
   }
 
@@ -804,16 +778,92 @@ function createPainter(root: HTMLDivElement, srcs: string[]): Painter | null {
     if (shown >= 0 && slots[shown].w !== fitW) drawShown();
     setPose(idlePose());
     p.lean = 0;
-    p.q = 0;
-    p.qv = 0;
     p.air = 0;
-    p.stride = 0;
-    p.look = 0;
     renderBot();
     root.classList.add("pt-live", "pt-idle");
+    syncClip();
   }
 
+  /* ---------- the moving capture ---------- */
+  /* One <video>, and it only ever holds the clip of the project that is
+     painted and at rest. Nothing is fetched before that, off screen, in a
+     hidden tab, with Save-Data on, or when motion is reduced. */
+  const conn = (navigator as Navigator & { connection?: { saveData?: boolean } }).connection;
+  const clipsOk =
+    !!video && !conn?.saveData && !window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const small = window.matchMedia("(max-width: 640px)");
+  let clipOf = -1; // which project's clip has the src
+  let clipOn = false; // faded in over the still
+
+  /* Take the clip away so its download stops. With freeze, its current frame
+     is left on the canvas first, so the next painting goes over what was
+     showing and nothing jumps. */
+  function dropClip(freeze: boolean) {
+    if (!video || clipOf < 0) return;
+    if (freeze && clipOn && video.videoWidth) {
+      try {
+        const vw = video.videoWidth;
+        const vh = video.videoHeight;
+        const s = Math.max(W / vw, H / vh);
+        const sw = W / s;
+        const sh = H / s;
+        ctx.setTransform(1, 0, 0, 1, 0, 0);
+        ctx.globalCompositeOperation = "source-over";
+        ctx.imageSmoothingEnabled = true;
+        ctx.imageSmoothingQuality = "high";
+        ctx.drawImage(video, (vw - sw) / 2, 0, sw, sh, 0, 0, canvas.width, canvas.height);
+      } catch {
+        /* the still is underneath anyway */
+      }
+    }
+    clipOf = -1;
+    clipOn = false;
+    video.removeAttribute("data-on");
+    video.pause();
+    video.removeAttribute("src");
+    video.preload = "none";
+    video.load();
+  }
+  function syncClip() {
+    if (!video || !clipsOk || dead) return;
+    const visible = onScreen && !document.hidden;
+    if (clipOf < 0) {
+      const base = !job && play && shown >= 0 && shown === active ? clips[shown] : null;
+      if (!base || !visible) return;
+      clipOf = shown;
+      video.muted = true;
+      video.defaultMuted = true;
+      video.preload = "auto";
+      video.src = `${base}${small.matches ? "-sm" : ""}.mp4`;
+      video.load();
+    }
+    if (visible) video.play().catch(() => {});
+    else video.pause();
+  }
+  /* Shown only once a frame is really on screen, so the still is never
+     replaced by an empty box */
+  const onPlaying = () => {
+    if (!video || clipOf < 0 || clipOn) return;
+    const of = clipOf;
+    const reveal = () => {
+      if (dead || clipOf !== of || clipOn) return;
+      clipOn = true;
+      video.setAttribute("data-on", "");
+    };
+    const v = video as HTMLVideoElement & { requestVideoFrameCallback?: (cb: () => void) => number };
+    if (typeof v.requestVideoFrameCallback === "function") v.requestVideoFrameCallback(reveal);
+    else reveal();
+  };
+  const onClipError = () => {
+    if (clipOf < 0) return;
+    clips[clipOf] = null; // keeps its still
+    dropClip(false);
+  };
+  video?.addEventListener("playing", onPlaying);
+  video?.addEventListener("error", onClipError);
+
   function begin(target: number) {
+    dropClip(true);
     drawFit(target);
     const rnd = mulberry(Math.floor(Math.random() * 1e9));
     const strokes = Array.from({ length: STROKES }, (_, k) => makeStroke(k, rnd));
@@ -842,7 +892,6 @@ function createPainter(root: HTMLDivElement, srcs: string[]): Painter | null {
       p.sc = 0.01;
       p.ang = -2.0;
       p.rad = 1.3;
-      p.look = 1;
       p.tint = [...BRISTLE];
       renderBot();
     }
@@ -853,6 +902,7 @@ function createPainter(root: HTMLDivElement, srcs: string[]): Painter | null {
   }
 
   function blank() {
+    dropClip(false);
     job = null;
     stop();
     shown = -1;
@@ -946,6 +996,7 @@ function createPainter(root: HTMLDivElement, srcs: string[]): Painter | null {
       root.classList.toggle("pt-paused", !onScreen);
       if (onScreen) kick();
       else stop();
+      syncClip();
     },
     { rootMargin: "80px" }
   );
@@ -953,6 +1004,7 @@ function createPainter(root: HTMLDivElement, srcs: string[]): Painter | null {
   const onVisibility = () => {
     if (document.hidden) stop();
     else kick();
+    syncClip();
   };
   document.addEventListener("visibilitychange", onVisibility);
 
@@ -964,6 +1016,9 @@ function createPainter(root: HTMLDivElement, srcs: string[]): Painter | null {
       resolve();
     },
     destroy() {
+      dropClip(false);
+      video?.removeEventListener("playing", onPlaying);
+      video?.removeEventListener("error", onClipError);
       dead = true;
       stop();
       window.clearTimeout(restTimer);
@@ -1058,22 +1113,41 @@ export function PaintedPanel({
       ) : (
         <>
           <canvas className="pt-canvas" aria-hidden="true" />
+          {/* The moving capture of the painted site. It has no src until the
+              painter gives it one. */}
+          <video
+            className="pt-clip"
+            muted
+            loop
+            playsInline
+            preload="none"
+            controls={false}
+            disablePictureInPicture
+            disableRemotePlayback
+            tabIndex={-1}
+            aria-hidden="true"
+          />
           <canvas className="pt-wet" aria-hidden="true" />
-          <Helper />
+          <Mark />
         </>
       )}
     </div>
   );
 }
 
-/* The helper: a coral gumdrop with a big flat brush. Drawn in a space where
-   the body is 100 units wide and centred on the origin. */
-function Helper() {
+/* Anthropic's Claude mark, exactly as published (the path is the "claude"
+   icon from simple-icons 16, a 24 unit square), in its own colour. It is only
+   placed and turned, never redrawn or reshaped. Drawn in a space where the
+   mark is 100 units wide and centred on the origin. */
+const CLAUDE_MARK =
+  "m4.7144 15.9555 4.7174-2.6471.079-.2307-.079-.1275h-.2307l-.7893-.0486-2.6956-.0729-2.3375-.0971-2.2646-.1214-.5707-.1215-.5343-.7042.0546-.3522.4797-.3218.686.0608 1.5179.1032 2.2767.1578 1.6514.0972 2.4468.255h.3886l.0546-.1579-.1336-.0971-.1032-.0972L6.973 9.8356l-2.55-1.6879-1.3356-.9714-.7225-.4918-.3643-.4614-.1578-1.0078.6557-.7225.8803.0607.2246.0607.8925.686 1.9064 1.4754 2.4893 1.8336.3643.3035.1457-.1032.0182-.0728-.164-.2733-1.3539-2.4467-1.445-2.4893-.6435-1.032-.17-.6194c-.0607-.255-.1032-.4674-.1032-.7285L6.287.1335 6.6997 0l.9957.1336.419.3642.6192 1.4147 1.0018 2.2282 1.5543 3.0296.4553.8985.2429.8318.091.255h.1579v-.1457l.1275-1.706.2368-2.0947.2307-2.6957.0789-.7589.3764-.9107.7468-.4918.5828.2793.4797.686-.0668.4433-.2853 1.8517-.5586 2.9021-.3643 1.9429h.2125l.2429-.2429.9835-1.3053 1.6514-2.0643.7286-.8196.85-.9046.5464-.4311h1.0321l.759 1.1293-.34 1.1657-1.0625 1.3478-.8804 1.1414-1.2628 1.7-.7893 1.36.0729.1093.1882-.0183 2.8535-.607 1.5421-.2794 1.8396-.3157.8318.3886.091.3946-.3278.8075-1.967.4857-2.3072.4614-3.4364.8136-.0425.0304.0486.0607 1.5482.1457.6618.0364h1.621l3.0175.2247.7892.522.4736.6376-.079.4857-1.2142.6193-1.6393-.3886-3.825-.9107-1.3113-.3279h-.1822v.1093l1.0929 1.0686 2.0035 1.8092 2.5075 2.3314.1275.5768-.3218.4554-.34-.0486-2.2039-1.6575-.85-.7468-1.9246-1.621h-.1275v.17l.4432.6496 2.3436 3.5214.1214 1.0807-.17.3521-.6071.2125-.6679-.1214-1.3721-1.9246L14.38 17.959l-1.1414-1.9428-.1397.079-.674 7.2552-.3156.3703-.7286.2793-.6071-.4614-.3218-.7468.3218-1.4753.3886-1.9246.3157-1.53.2853-1.9004.17-.6314-.0121-.0425-.1397.0182-1.4328 1.9672-2.1796 2.9446-1.7243 1.8456-.4128.164-.7164-.3704.0667-.6618.4008-.5889 2.386-3.0357 1.4389-1.882.929-1.0868-.0062-.1579h-.0546l-6.3385 4.1164-1.1293.1457-.4857-.4554.0608-.7467.2307-.2429 1.9064-1.3114Z";
+
+function Mark() {
   return (
     <svg className="pt-bot" viewBox="-220 -220 440 440" aria-hidden="true" focusable="false">
       {/* brush: bristle tip at the origin, handle running back along -x */}
       <g data-pt="brush">
-        <g className="pt-sway">
+        <g className="pt-bob">
           <path d="M-52 -5.6 L-130 -7.8 A7.8 7.8 0 0 0 -130 7.8 L-52 5.6 Z" fill="#5266eb" />
           <path
             d="M-124 -3.1 L-62 -1.6"
@@ -1108,51 +1182,10 @@ function Helper() {
           />
         </g>
       </g>
+      {/* the mark, over the end of the handle */}
       <g data-pt="body">
-        <g className="pt-breathe">
-          <g data-pt="leg-l">
-            <rect x="-34" y="30" width="18" height="23" rx="7.5" fill={CORAL_DEEP} />
-          </g>
-          <g data-pt="leg-r">
-            <rect x="16" y="30" width="18" height="23" rx="7.5" fill={CORAL_DEEP} />
-          </g>
-          <path
-            d="M-50 9 C-50 -25 -34 -42 0 -42 C34 -42 50 -25 50 9 L50 16 C50 31 41 40 26 40 L-26 40 C-41 40 -50 31 -50 16 Z"
-            fill={CORAL}
-          />
-          <path
-            d="M-37 -12 C-33 -25 -23 -32 -10 -33.5"
-            fill="none"
-            stroke="#eca78c"
-            strokeWidth="5"
-            strokeLinecap="round"
-            opacity="0.75"
-          />
-          <ellipse cx="-34" cy="12" rx="7" ry="4.6" fill="#ee9c84" opacity="0.7" />
-          <ellipse cx="34" cy="12" rx="7" ry="4.6" fill="#ee9c84" opacity="0.7" />
-          <g data-pt="eyes">
-            <g className="pt-blink">
-              <ellipse cx="-17" cy="-4" rx="6.3" ry="8.8" fill="#2b1f1c" />
-              <ellipse cx="17" cy="-4" rx="6.3" ry="8.8" fill="#2b1f1c" />
-              <circle cx="-15" cy="-7.6" r="2.2" fill="#fff" opacity="0.92" />
-              <circle cx="19" cy="-7.6" r="2.2" fill="#fff" opacity="0.92" />
-            </g>
-          </g>
-        </g>
-      </g>
-      {/* the mitt that grips the handle */}
-      <g data-pt="hand">
-        <g className="pt-sway">
-          <rect
-            x="-10.5"
-            y="-13.5"
-            width="21"
-            height="27"
-            rx="10"
-            fill={CORAL}
-            stroke={CORAL_DEEP}
-            strokeWidth="3"
-          />
+        <g className="pt-bob">
+          <path d={CLAUDE_MARK} fill={CORAL} transform="translate(-50 -50) scale(4.16667)" />
         </g>
       </g>
     </svg>

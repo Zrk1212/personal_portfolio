@@ -29,17 +29,15 @@ export function Closing() {
             className="cl-keycap cl-keycap-hero left-[24%] top-[24%] h-32 w-32 sm:h-36 sm:w-36"
             style={{ "--cl-r": "-14deg", "--cl-d": "0s" } as CSSProperties}
           >
-            <LogoMark className="w-[58%]" />
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src="/logos/vantage-app.webp" alt="" width={144} height={144} loading="lazy" decoding="async" className="cl-keycap-img" />
           </div>
           <div
-            className="cl-keycap right-[2%] top-0 h-24 w-24 sm:h-28 sm:w-28"
+            className="cl-keycap cl-keycap-light right-[2%] top-0 h-24 w-24 sm:h-28 sm:w-28"
             style={{ "--cl-r": "12deg", "--cl-d": "-2.2s" } as CSSProperties}
           >
-            <svg viewBox="0 0 48 32" fill="none" stroke="currentColor" strokeWidth="3.2" strokeLinecap="round" strokeLinejoin="round" className="w-[52%]">
-              <path d="M13 6 3 16l10 10" />
-              <path d="M35 6l10 10-10 10" />
-              <path d="M28 4 20 28" />
-            </svg>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src="/logos/uva-v-sabre.svg" alt="" width={248} height={196} loading="lazy" decoding="async" className="w-[58%] h-auto" />
           </div>
         </div>
       </div>

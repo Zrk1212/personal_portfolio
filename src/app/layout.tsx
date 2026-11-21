@@ -29,7 +29,7 @@ const OG_IMAGE = {
   url: "/og.jpg",
   width: 1200,
   height: 630,
-  alt: "Zac Klein. Your ambition is the limit. One-on-one sessions where your high schooler builds and launches a real web or iOS app.",
+  alt: "Zac Klein. Your ambition is the limit. One-on-one sessions where your high schooler builds and launches a real online business.",
 };
 
 export const metadata: Metadata = {

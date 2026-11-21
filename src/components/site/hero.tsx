@@ -10,8 +10,12 @@ import { PaintedPanel } from "./painter";
 import { TabList, usePrefersReducedMotion } from "./shell";
 
 /* The laptop display inside /hero/overlook.webp, as fractions of the image.
-   Re-measure these if the photo is ever swapped. */
-const SCREEN = { x: 0.4762, y: 0.6392, w: 0.0472, h: 0.0449 };
+   The dark lid in the photo spans x 1463-1609, y 1309-1401 (of 3072 x 2048);
+   the display sits inside it, so the photo's own lid shows around it as the
+   bezel. Re-measure these if the photo is ever swapped. */
+const SCREEN = { x: 1466.5 / 3072, y: 1312 / 2048, w: 139 / 3072, h: 84.5 / 2048 };
+// The share of the push over which the screen's glare and dimming ease away
+const FX_FADE = 0.45;
 const IMG_RATIO = 3 / 2;
 const ANCHOR_Y = 0.6; // how much of the vertical crop comes off the top
 const NAV_H = 72;
@@ -60,6 +64,7 @@ export function Hero() {
   const laptopRef = useRef<HTMLDivElement>(null);
   const coverRef = useRef<HTMLDivElement>(null);
   const coverLogoRef = useRef<HTMLImageElement>(null);
+  const fxRef = useRef<HTMLDivElement>(null);
 
   const [active, setActive] = useState(0);
   const [docked, setDocked] = useState(false);
@@ -245,6 +250,7 @@ export function Hero() {
         left.style.pointerEvents = "auto";
       }
       if (coverRef.current) coverRef.current.style.opacity = "0";
+      if (fxRef.current) fxRef.current.style.opacity = "0";
       if (laptopRef.current) laptopRef.current.style.opacity = "1";
       setDockedState(true);
     }
@@ -327,6 +333,9 @@ export function Hero() {
       // back the other way to keep its proportions.
       if (coverRef.current) coverRef.current.style.opacity = String(1 - clamp((d - 0.5) / 0.45));
       if (coverLogoRef.current) coverLogoRef.current.style.transform = `scale(1, ${sx / sy})`;
+      // In the photo it is a lit display under an evening sky; that light
+      // eases away as the camera closes in, leaving a clean panel.
+      if (fxRef.current) fxRef.current.style.opacity = String(1 - ease(clamp(z / FX_FADE)));
       if (laptopRef.current) laptopRef.current.style.opacity = "0";
 
       const copy = copyRef.current;
@@ -547,11 +556,12 @@ export function Hero() {
             <div
               ref={laptopRef}
               aria-hidden
-              className="absolute grid place-items-center rounded-[1.5px] bg-white"
+              className="absolute grid place-items-center overflow-hidden rounded-[1px] bg-white"
               style={{ opacity: 0 }}
             >
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img src="/hero/common-app.svg" alt="" className="w-[52%]" />
+              <div className="m-screen-fx absolute inset-0" />
             </div>
 
             {/* Headline. First in the markup so it reads before the app list. */}
@@ -563,7 +573,7 @@ export function Hero() {
                 <h1 className="m-h1 mx-auto max-w-[760px] text-balance">Your ambition is the limit</h1>
                 <p className="m-hero-sub mx-auto mt-3 max-w-[520px] text-balance text-[17px] leading-[1.35] text-[#ededf3] sm:text-[20px]">
                   One-on-one sessions where your high schooler builds and
-                  launches a real web or iOS app.
+                  launches a real online business.
                 </p>
                 <div ref={ctaRef} className="m-hero-cta">
                   <HeroChat />
@@ -618,6 +628,12 @@ export function Hero() {
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img ref={coverLogoRef} src="/hero/common-app.svg" alt="" className="w-[52%]" />
               </div>
+              {/* The light of the scene on the display: dimming, a warm cast, a streak of glare */}
+              <div
+                ref={fxRef}
+                aria-hidden
+                className="m-screen-fx pointer-events-none absolute inset-0 overflow-hidden rounded-xl"
+              />
             </div>
           </div>
         </div>

@@ -1,5 +1,5 @@
 /* ----------------------------------------------------------------
-   Painter panel: a white canvas that a small helper paints the app
+   Painter panel: a white canvas that the Claude mark paints the app
    screenshots onto. Everything here is prefixed pt-.
 ----------------------------------------------------------------- */
 
@@ -25,7 +25,25 @@
   pointer-events: none;
 }
 
-/* ---------- The helper ---------- */
+/* The moving capture, exactly over the painted still: same box, same crop.
+   It stays clear until it is playing, then fades in; it leaves at once. */
+.pt-clip {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top;
+  pointer-events: none;
+  opacity: 0;
+}
+.pt-clip[data-on] {
+  opacity: 1;
+  transition: opacity 0.5s cubic-bezier(0, 0, 0.2, 1);
+}
+
+/* ---------- The mark ---------- */
 .pt-bot {
   position: absolute;
   top: 0;
@@ -40,68 +58,23 @@
   opacity: 1;
 }
 
-.pt-blink,
-.pt-breathe,
-.pt-sway {
-  transform-box: fill-box;
+/* Resting in the corner: the mark and its brush rise and settle together,
+   slowly. Nothing stretches. */
+.pt-idle .pt-bob {
+  animation: pt-bob 3.6s ease-in-out infinite;
 }
-
-/* A blink now and then, painting or resting */
-.pt-live .pt-blink {
-  transform-origin: 50% 55%;
-  animation: pt-blink 5.4s linear infinite;
-}
-@keyframes pt-blink {
-  0%,
-  43.5%,
-  46.5%,
-  91%,
-  93.2%,
-  95.2%,
-  97.4%,
-  100% {
-    transform: scaleY(1);
-  }
-  45% {
-    transform: scaleY(0.08);
-  }
-  92.1%,
-  96.3% {
-    transform: scaleY(0.08);
-  }
-}
-
-/* Resting in the corner: slow breathing, and the brush moves with it */
-.pt-idle .pt-breathe {
-  transform-origin: 50% 100%;
-  animation: pt-breathe 3.4s ease-in-out infinite;
-}
-@keyframes pt-breathe {
-  0%,
-  100% {
-    transform: scale(1, 1);
-  }
-  50% {
-    transform: scale(1.022, 0.962);
-  }
-}
-.pt-idle .pt-sway {
-  animation: pt-sway 3.4s ease-in-out infinite;
-}
-@keyframes pt-sway {
+@keyframes pt-bob {
   0%,
   100% {
     transform: translateY(0);
   }
   50% {
-    transform: translateY(1.6px);
+    transform: translateY(-3px);
   }
 }
 
 /* Off screen: nothing ticks */
-.pt-paused .pt-blink,
-.pt-paused .pt-breathe,
-.pt-paused .pt-sway {
+.pt-paused .pt-bob {
   animation-play-state: paused;
 }
 
@@ -120,9 +93,7 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .pt-blink,
-  .pt-breathe,
-  .pt-sway {
+  .pt-bob {
     animation: none !important;
   }
 }

@@ -147,15 +147,6 @@ function Nav({ home, clear }: { home: boolean; clear: boolean }) {
         </div>
 
         <div className="flex items-center gap-2">
-          <a
-            href={`${prefix}#pricing`}
-            className={`m-btn m-btn-secondary !hidden !h-8 !px-4 !text-[14px] transition-opacity duration-300 lg:!inline-flex ${
-              clear ? "pointer-events-none opacity-0" : "opacity-100"
-            }`}
-            tabIndex={clear ? -1 : 0}
-          >
-            See pricing
-          </a>
           <Link
             href="/contact"
             className="m-btn m-btn-primary !h-9 !px-4 !text-[14px] max-[359px]:!px-3 max-[359px]:!text-[13px] md:!h-8"

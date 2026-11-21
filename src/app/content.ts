@@ -87,27 +87,27 @@ export const PROJECTS: Project[] = [
     image: "/work/scent-smart.png",
   },
   {
-    title: "Joelle Klein Essay Coaching",
+    title: "Bubble",
     blurb:
-      "A marketing site for a college essay coach who takes high school seniors from first idea to final draft. Clear packages, an honest walkthrough of the process, and a free intro call, built to make a nervous decision feel simple.",
-    tags: ["Next.js", "Tailwind", "Coaching"],
+      "A money planner for college clubs, made at UVA. Admins track dues, income and spending in one place, and members see the club's totals and where every dollar went. It never moves money. It is a planning and transparency tool, and it is free.",
+    tags: ["Next.js", "Tailwind", "Postgres"],
     year: "2026",
-    hue: "#e07a5f",
-    hue2: "#c0405f",
-    href: "https://joelleklein.com",
-    url: "joelleklein.com",
-    image: "/work/joelle.png",
+    hue: "#0d9488",
+    hue2: "#2dd4bf",
+    href: "https://bubble.zrk.ventures",
+    url: "bubble.zrk.ventures",
+    image: "/work/bubble.png",
   },
   {
     title: "Dr. Rob Chiropractic",
     blurb:
-      "A polished marketing site for a chiropractic and sports-medicine practice. Credentials, services, treatment tech, and booking, built to turn visitors into patients.",
+      "A polished marketing site for a chiropractic and sports-medicine practice. Credentials, Active Release Technique, the conditions he treats, and booking, built to turn visitors into patients.",
     tags: ["React", "Vite", "Local business"],
     year: "2026",
     hue: "#ffb44d",
     hue2: "#7c5cff",
-    href: "https://dr-rob.vercel.app",
-    url: "dr-rob.vercel.app",
+    href: "https://www.drrobsanfilippo.com/",
+    url: "drrobsanfilippo.com",
     image: "/work/dr-rob.png",
   },
 ];
@@ -146,7 +146,8 @@ export const PROCESS = [
   },
 ];
 
-// Prices. iOS is double web at every length. A bundle is five sessions.
+// Prices. Two session lengths, 1 hour and 2 hours. iOS is double web at both.
+// A bundle is five sessions, and the 2-hour bundle is the best value.
 export type PriceRow = {
   length: string;
   single: string;
@@ -168,8 +169,8 @@ export const PRICING: PriceTrack[] = [
     blurb: "A web app with a real link your student can share with anyone.",
     featured: true,
     rows: [
-      { length: "30 minutes", single: "$60", bundle: "$250", each: "$50 each" },
-      { length: "1 hour", single: "$100", bundle: "$425", each: "$85 each", best: true },
+      { length: "1 hour", single: "$120", bundle: "$475", each: "$95 each" },
+      { length: "2 hours", single: "$200", bundle: "$790", each: "$158 each", best: true },
     ],
   },
   {
@@ -177,8 +178,8 @@ export const PRICING: PriceTrack[] = [
     blurb:
       "An iPhone app. iOS costs double because it adds Xcode, Apple's developer setup and the App Store / TestFlight process.",
     rows: [
-      { length: "30 minutes", single: "$120", bundle: "$500", each: "$100 each" },
-      { length: "1 hour", single: "$200", bundle: "$850", each: "$170 each", best: true },
+      { length: "1 hour", single: "$240", bundle: "$950", each: "$190 each" },
+      { length: "2 hours", single: "$400", bundle: "$1,580", each: "$316 each", best: true },
     ],
   },
 ];
@@ -194,7 +195,7 @@ export const FAQ = [
   },
   {
     q: "Do they need AI accounts?",
-    a: "Most AI tools have age limits. Claude is for users 18 and older, and ChatGPT allows ages 13 to 17 with a parent's permission. In the first session we go over what each tool allows at your student's age and set up any accounts in your name, so you stay in the loop.",
+    a: "Yes. We will need a Pro subscription to Claude, ChatGPT or Gemini.",
   },
   {
     q: "Is this cheating?",
