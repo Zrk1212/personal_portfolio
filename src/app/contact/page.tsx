@@ -6,14 +6,14 @@ export const viewport: Viewport = {
 };
 
 export const metadata: Metadata = {
-  title: "Book a session · Zac Klein",
+  title: "Book a free consultation · Zac Klein",
   alternates: { canonical: "/contact" },
   description:
-    "Book a one-on-one session where your high schooler builds a real web or iOS app with AI. Tell me about your student and I'll get back to you within a day.",
+    "Book a free 30-minute consultation about one-on-one sessions where your high schooler builds a real web or iOS app with AI. I'll get back to you within a day.",
   openGraph: {
-    title: "Book a session · Zac Klein",
+    title: "Book a free consultation · Zac Klein",
     description:
-      "Book a one-on-one session where your high schooler builds a real web or iOS app with AI. Tell me about your student and I'll get back to you within a day.",
+      "Book a free 30-minute consultation about one-on-one sessions where your high schooler builds a real web or iOS app with AI. I'll get back to you within a day.",
     type: "website",
     url: "/contact",
     siteName: "Zac Klein",
@@ -21,7 +21,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Book a session · Zac Klein",
+    title: "Book a free consultation · Zac Klein",
     images: ["/og.jpg"],
   },
 };

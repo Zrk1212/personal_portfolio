@@ -68,8 +68,6 @@ export default function ContactForm() {
           name: data.name,
           email: data.email,
           grade: data.grade,
-          app_type: data.app_type,
-          format: data.format,
           message: data.message,
         }),
       });
@@ -104,17 +102,17 @@ export default function ContactForm() {
           <div className="m-wrap grid gap-12 lg:grid-cols-[minmax(0,0.85fr)_minmax(0,1fr)] lg:gap-16">
             {/* Left: pitch */}
             <div>
-              <h1 className="m-h1 max-w-[440px] text-balance">Tell me about your student</h1>
+              <h1 className="m-h1 max-w-[440px] text-balance">Book a free consultation</h1>
               <p className="m-body mt-5 max-w-[420px]" style={{ color: "var(--muted)" }}>
                 Share a few details and I&apos;ll get back to you within a day
-                to set up a first session. No pressure, and no app idea needed
-                yet.
+                to set up a free 30-minute consultation over Zoom. No pressure,
+                and no app idea needed yet.
               </p>
               <div className="mt-10 max-w-[420px]">
                 {[
                   ["Email", "zacklein555@gmail.com", "mailto:zacklein555@gmail.com"],
                   ["GitHub", "github.com/Zrk1212", "https://github.com/Zrk1212"],
-                  ["Where", "Chappaqua and Westchester, or Zoom", ""],
+                  ["First call", "Free, 30 minutes, over Zoom", ""],
                 ].map(([label, value, href]) => (
                   <div
                     key={label}
@@ -200,48 +198,24 @@ export default function ContactForm() {
                     />
                   </Field>
 
-                  <div className="grid gap-5 sm:grid-cols-3">
-                    <Field label="Student's grade">
-                      <Select
-                        name="grade"
-                        options={[
-                          ["9", "9th"],
-                          ["10", "10th"],
-                          ["11", "11th"],
-                          ["12", "12th"],
-                        ]}
-                      />
-                    </Field>
+                  <Field label="Student's grade">
+                    <Select
+                      name="grade"
+                      options={[
+                        ["9", "9th"],
+                        ["10", "10th"],
+                        ["11", "11th"],
+                        ["12", "12th"],
+                      ]}
+                    />
+                  </Field>
 
-                    <Field label="Web app or iOS app?">
-                      <Select
-                        name="app_type"
-                        options={[
-                          ["Web app", "Web app"],
-                          ["iOS app", "iOS app"],
-                          ["Not sure yet", "Not sure yet"],
-                        ]}
-                      />
-                    </Field>
-
-                    <Field label="In person or Zoom?">
-                      <Select
-                        name="format"
-                        options={[
-                          ["In person", "In person"],
-                          ["Zoom", "Zoom"],
-                          ["Either", "Either"],
-                        ]}
-                      />
-                    </Field>
-                  </div>
-
-                  <Field label="What is your student interested in, and do they have an app idea yet?">
+                  <Field label="Tell me a little about your student">
                     <textarea
                       name="message"
                       required
                       rows={5}
-                      placeholder="A few sentences is plenty. It's fine if there's no idea yet."
+                      placeholder="A few sentences is plenty. What are they interested in?"
                       className="m-input resize-none"
                     />
                   </Field>
@@ -255,7 +229,7 @@ export default function ContactForm() {
                     disabled={status === "sending"}
                     className="m-btn m-btn-primary w-full disabled:cursor-not-allowed disabled:opacity-70"
                   >
-                    {status === "sending" ? "Sending…" : "Send message"}
+                    {status === "sending" ? "Sending…" : "Request a consultation"}
                   </button>
 
                   <p className="text-center text-[13px]" style={{ color: "var(--muted)" }}>

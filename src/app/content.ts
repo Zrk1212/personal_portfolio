@@ -51,16 +51,16 @@ export type Project = {
 
 export const PROJECTS: Project[] = [
   {
-    title: "Vantage Recruiting",
+    title: "Scent Smart",
     blurb:
-      "An AI recruiting app for high school lacrosse players, live on the App Store and the web with paying users. It writes personalized emails to college coaches, tracks who opened them, and keeps the whole recruiting timeline in one place.",
-    tags: ["iOS app", "Web app", "Claude AI"],
-    year: "2026",
-    hue: "#c7f25b",
+      "Matches premium colognes to affordable dupes that smell nearly identical, and breaks down what each fragrance note does. A fast, focused fragrance finder.",
+    tags: ["Web app", "Fragrance", "UX"],
+    year: "2025",
+    hue: "#7c5cff",
     hue2: "#2dd4bf",
-    href: "https://vantage-recruiting.com",
-    url: "vantage-recruiting.com",
-    image: "/work/vantage.png",
+    href: "https://scent-smart.vercel.app",
+    url: "scent-smart.vercel.app",
+    image: "/work/scent-smart.png",
   },
   {
     title: "Hoos Planner",
@@ -75,16 +75,16 @@ export const PROJECTS: Project[] = [
     image: "/work/hoos-planner.png",
   },
   {
-    title: "Scent Smart",
+    title: "Vantage Recruiting",
     blurb:
-      "Matches premium colognes to affordable dupes that smell nearly identical, and breaks down what each fragrance note does. A fast, focused fragrance finder.",
-    tags: ["Web app", "Fragrance", "UX"],
-    year: "2025",
-    hue: "#7c5cff",
+      "An AI recruiting app for high school lacrosse players, live on the App Store and the web with paying users. It writes personalized emails to college coaches, tracks who opened them, and keeps the whole recruiting timeline in one place.",
+    tags: ["iOS app", "Web app", "Claude AI"],
+    year: "2026",
+    hue: "#c7f25b",
     hue2: "#2dd4bf",
-    href: "https://scent-smart.vercel.app",
-    url: "scent-smart.vercel.app",
-    image: "/work/scent-smart.png",
+    href: "https://vantage-recruiting.com",
+    url: "vantage-recruiting.com",
+    image: "/work/vantage.png",
   },
   {
     title: "Bubble",
@@ -186,8 +186,16 @@ export const PRICING: PriceTrack[] = [
 
 export const FAQ = [
   {
-    q: "Does my kid need coding experience?",
+    q: "Does my student need coding experience?",
     a: "No. We start from their idea, and I teach what they need as we go.",
+  },
+  {
+    q: "How many sessions does it take?",
+    a: "About five sessions for a fully built web app. An iPhone app takes the same five sessions, plus the time Apple takes to review it, which can mean a few rounds of fixes and resubmitting. In total, plan on about 5 to 7 hours, depending on the app your student wants to build and how involved they are.",
+  },
+  {
+    q: "Can we talk before booking a session?",
+    a: "Yes. You can book a free 30-minute consultation over Zoom. We'll talk about your student, how the sessions work and my background, and I'll answer your questions.",
   },
   {
     q: "What do they need?",
@@ -200,9 +208,5 @@ export const FAQ = [
   {
     q: "Is this cheating?",
     a: "No. Your student makes the plan, makes the decisions and can explain every part of what they built. It's also a real project they can talk about.",
-  },
-  {
-    q: "In person or Zoom?",
-    a: "Both. In person in Chappaqua and around Westchester when I'm home, and over Zoom year-round.",
   },
 ];

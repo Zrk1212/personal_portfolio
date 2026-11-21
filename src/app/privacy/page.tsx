@@ -21,8 +21,7 @@ export default function PrivacyPage() {
             <>
               <p>
                 The only thing the site collects is what you type into the contact form. That is
-                your name, your email address, your student&apos;s grade, whether they want a web
-                app or an iOS app, whether you prefer in person or Zoom, and your message.
+                your name, your email address, your student&apos;s grade and your message.
               </p>
               <p>
                 There are no accounts, no analytics and no advertising or tracking cookies on this

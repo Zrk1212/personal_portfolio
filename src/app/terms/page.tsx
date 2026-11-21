@@ -43,8 +43,8 @@ export default function TermsPage() {
             <>
               <p>
                 Nothing on this site guarantees admission to any college or any other result. The
-                home page types playful prompts, such as asking an AI to get a student into
-                Harvard, as an illustration of how the tools work. They are not a promise of
+                home page types playful prompts, such as asking an AI to build a business with no
+                mistakes, as an illustration of how the tools work. They are not a promise of
                 anything.
               </p>
               <p>
@@ -59,8 +59,8 @@ export default function TermsPage() {
           body: (
             <p>
               This site and service are not affiliated with, endorsed by or sponsored by Common
-              App, any college or university named on the site (including Harvard, Yale, Princeton
-              and the University of Virginia), Anthropic, OpenAI, Google, Apple or Vercel. Their
+              App, any college or university named on the site (including the University of
+              Virginia), Anthropic, OpenAI, Google, Apple or Vercel. Their
               names and logos belong to their owners.
             </p>
           ),

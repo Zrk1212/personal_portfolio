@@ -93,6 +93,16 @@ export function Pricing() {
             </div>
           ))}
         </div>
+
+        <p className="m-body m-th mx-auto mt-10 max-w-[640px] text-center" style={{ color: "var(--muted)" }}>
+          Not sure yet? Start with a free 30-minute consultation.{" "}
+          <Link
+            href="/contact"
+            className="m-focus whitespace-nowrap rounded font-[440] text-[var(--fg)] underline decoration-[color-mix(in_srgb,currentColor_40%,transparent)] underline-offset-4 hover:decoration-current"
+          >
+            Book a call
+          </Link>
+        </p>
       </div>
     </section>
   );
@@ -124,17 +134,18 @@ export function About() {
             </h2>
             <div className="m-body m-th mt-5 max-w-[480px] space-y-4" style={{ color: "var(--muted)" }}>
               <p>
-                I&apos;m a student at UVA from Chappaqua, NY. I&apos;ve built and
-                shipped multiple online businesses with AI. My proudest venture
-                is Vantage Recruiting, an AI lacrosse recruiting tool that&apos;s
-                live on the App Store with 100+ paying users. I&apos;m always
-                looking for pain points to solve with AI.
+                I&apos;m a student at the University of Virginia and the founder
+                of Vantage Recruiting, an AI recruiting platform for high
+                school lacrosse players. It&apos;s live on the App Store and
+                the web with 500+ users. I&apos;ve designed, built and launched
+                multiple online businesses with AI, each one from an idea to a
+                real product. That is the path I walk your student through.
               </p>
               <p>
-                I&apos;ll teach the exact tools I use every week, one-on-one, at
-                your student&apos;s pace. They&apos;ll get real, hands-on
-                experience building a business they can use on their college
-                application.
+                I teach the exact tools I use every week, one-on-one, at your
+                student&apos;s pace. They finish with a real business they
+                built themselves, and they can speak about it with confidence
+                on their college applications.
               </p>
             </div>
             {/* TODO: add a parent or student testimonial here once you have one. */}

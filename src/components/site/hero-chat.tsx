@@ -6,10 +6,10 @@ import { LogoMark } from "./logo";
 import { usePrefersReducedMotion } from "./shell";
 
 const PROMPTS = [
-  "Get me into Harvard, no mistakes",
-  "Get me into Yale, no mistakes",
-  "Get me into Princeton, no mistakes",
-  "Get me into UVA, no mistakes",
+  "Build me a business, no mistakes",
+  "Make me a founder, no mistakes",
+  "Make my idea real, no mistakes",
+  "Find my first user, no mistakes",
 ];
 const LONGEST = PROMPTS.reduce((a, b) => (b.length > a.length ? b : a));
 
