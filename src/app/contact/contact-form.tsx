@@ -64,7 +64,7 @@ export default function ContactForm() {
         body: JSON.stringify({
           access_key: ACCESS_KEY,
           subject: `New tutoring inquiry from ${data.name || "your site"}`,
-          from_name: "Zac Klein Tutoring",
+          from_name: "Founder",
           name: data.name,
           email: data.email,
           grade: data.grade,

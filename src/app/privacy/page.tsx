@@ -4,7 +4,7 @@ import { EmailLink, LegalPage, legalMetadata } from "@/components/site/legal";
 export const viewport: Viewport = { themeColor: "#171721" };
 
 export const metadata = legalMetadata(
-  "Privacy policy · Zac Klein",
+  "Privacy policy · Founder",
   "What this site collects when you send a message, who receives it, how long it is kept, and how to ask me to delete it.",
   "/privacy"
 );
@@ -13,7 +13,7 @@ export default function PrivacyPage() {
   return (
     <LegalPage
       title="Privacy policy"
-      intro="This site is run by Zac Klein, an individual and a University of Virginia student from Chappaqua, New York. It is written for parents, so this page is short and plain. It explains what happens to the details you share with me."
+      intro="This site, Founder, is run by Zac Klein, an individual and a University of Virginia student from Chappaqua, New York. It is written for parents, so this page is short and plain. It explains what happens to the details you share with me."
       sections={[
         {
           heading: "What I collect",

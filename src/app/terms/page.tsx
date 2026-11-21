@@ -4,7 +4,7 @@ import { EmailLink, LegalPage, legalMetadata } from "@/components/site/legal";
 export const viewport: Viewport = { themeColor: "#171721" };
 
 export const metadata = legalMetadata(
-  "Terms of use · Zac Klein",
+  "Terms of use · Founder",
   "The plain-English terms for using this site and booking one-on-one app-building sessions with Zac Klein.",
   "/terms"
 );
@@ -21,7 +21,7 @@ export default function TermsPage() {
           heading: "What the service is",
           body: (
             <p>
-              The site offers one-on-one tutoring sessions with Zac Klein, an individual and a
+              Founder offers one-on-one tutoring sessions with Zac Klein, an individual and a
               University of Virginia student from Chappaqua, New York. Sessions are held in person
               around Chappaqua and Westchester, or over Zoom. In them, a high school student builds
               a web or iOS app, or an online business, using AI tools.

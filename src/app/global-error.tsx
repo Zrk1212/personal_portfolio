@@ -38,7 +38,7 @@ export default function GlobalError({
           padding: 24,
         }}
       >
-        <title>Something went wrong · Zac Klein</title>
+        <title>Something went wrong · Founder</title>
         <div>
           <h1 style={{ fontSize: 36, lineHeight: 1.1, fontWeight: 500, margin: 0 }}>
             Something went wrong

@@ -29,29 +29,29 @@ const OG_IMAGE = {
   url: "/og.jpg",
   width: 1200,
   height: 630,
-  alt: "Zac Klein. Your ambition is the limit. One-on-one sessions where your high schooler builds and launches a real online business.",
+  alt: "Founder. Your ambition is the limit. One-on-one sessions where your high schooler builds and launches a real online business.",
 };
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://zrk.ventures"),
-  title: "Zac Klein · Teaching high schoolers to build real apps with AI",
+  metadataBase: new URL("https://founder.zrk.ventures"),
+  title: "Founder · Teaching high schoolers to build real apps with AI",
   description:
     "One-on-one sessions where high school students build and launch a real web or iOS app with AI. In person in Westchester or over Zoom.",
-  applicationName: "Zac Klein",
-  authors: [{ name: "Zac Klein", url: "https://zrk.ventures" }],
+  applicationName: "Founder",
+  authors: [{ name: "Zac Klein", url: "https://founder.zrk.ventures" }],
   openGraph: {
-    title: "Zac Klein · Teaching high schoolers to build real apps with AI",
+    title: "Founder · Teaching high schoolers to build real apps with AI",
     description:
       "One-on-one sessions where high school students build and launch a real web or iOS app with AI, and learn skills that carry over to whatever they build next.",
     type: "website",
     url: "/",
-    siteName: "Zac Klein",
+    siteName: "Founder",
     locale: "en_US",
     images: [OG_IMAGE],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Zac Klein · Teaching high schoolers to build real apps with AI",
+    title: "Founder · Teaching high schoolers to build real apps with AI",
     description:
       "One-on-one sessions where high school students build and launch a real web or iOS app with AI.",
     images: [OG_IMAGE.url],

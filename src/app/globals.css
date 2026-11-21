@@ -769,18 +769,38 @@ html:has(.m-site) {
   inset: 0;
   pointer-events: none; /* the column turns its own clicks on once docked */
   display: flex;
-  align-items: flex-start;
+  align-items: stretch;
   padding-top: 88px;
+  padding-bottom: 14px;
 }
+/* Stacked (phones and tablets held upright): the panel on top, the app list
+   under it. The panel gives up height before any of the text does. */
 .m-dock-grid {
-  display: grid;
-  align-items: center;
-  gap: 24px;
+  display: flex;
+  flex-direction: column;
+  justify-content: safe center;
+  gap: 18px;
+  min-height: 0;
 }
 .m-dock-slot {
+  flex: 0 1 min(calc((100vw - 48px) * 0.625), 400px);
+  min-height: 72px;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  container-type: size;
+}
+.m-dock-slot-box {
   aspect-ratio: 16 / 10;
   width: min(100%, 54svh);
-  margin-inline: auto;
+  width: min(100cqw, 160cqh);
+}
+.m-dock-col {
+  flex: none;
+}
+.m-dock-short {
+  display: none;
 }
 /* Side by side on desktop, and on phones held sideways */
 @media (min-width: 1024px),
@@ -788,13 +808,22 @@ html:has(.m-site) {
   .m-dock {
     align-items: center;
     padding-top: 72px;
+    padding-bottom: 0;
   }
   .m-dock-grid {
+    display: grid;
+    align-items: center;
+    justify-content: normal;
     grid-template-columns: minmax(0, 0.85fr) minmax(0, 1fr);
     gap: 64px;
   }
   .m-dock-slot {
     order: 2;
+    display: block;
+    min-height: 0;
+    container-type: normal;
+  }
+  .m-dock-slot-box {
     width: 100%;
   }
   .m-dock-col {
@@ -826,44 +855,107 @@ html:has(.m-site) {
     gap: 72px;
   }
 }
-/* Shorter screens drop the extras first, then the descriptions */
-@media (max-height: 690px) {
+/* Shorter desktop windows drop the extra link under the list */
+@media (max-height: 700px) {
   .m-dock .m-hide-short {
     display: none;
   }
 }
-@media (max-height: 570px) {
-  .m-dock .m-hide-shorter {
+/* Compact (phones, tablets, short windows): the app list becomes one row of
+   names with the chosen app's full description and link under it, so the
+   text is never cut off however little room there is. */
+@media (max-width: 1023px), (max-height: 660px) {
+  .m-dock .m-dock-title {
+    max-width: none;
+    font-size: 19px;
+  }
+  .m-dock .m-dock-tabs {
+    margin-top: 10px;
+  }
+  .m-dock .m-tabs {
+    position: relative;
+    display: flex;
+    flex-wrap: wrap;
+    column-gap: 18px;
+    padding-top: 5px;
+  }
+  .m-dock .m-tabs::before {
+    content: "";
+    position: absolute;
+    inset: 0 0 auto;
+    height: 1px;
+    background: var(--rule);
+  }
+  .m-dock .m-tab {
+    display: contents;
+  }
+  .m-dock .m-tab-rule,
+  .m-dock .m-tab-gap,
+  .m-dock .m-tab-dot,
+  .m-dock .m-hide-short,
+  .m-dock .m-dock-long {
     display: none;
   }
-  .m-dock .m-dock-blurb {
-    display: -webkit-box;
-    -webkit-box-orient: vertical;
-    -webkit-line-clamp: 2;
-    overflow: hidden;
+  .m-dock .m-dock-short {
+    display: inline;
+  }
+  .m-dock .m-tab-btn {
+    order: 1;
+    width: auto;
+    padding: 7px 0;
+  }
+  .m-dock .m-tab-btn .m-ui {
+    font-size: 15px;
+  }
+  .m-dock .m-tab-btn[aria-expanded="true"] .m-ui {
+    text-decoration: underline;
+    text-decoration-thickness: 1.5px;
+    text-underline-offset: 6px;
+  }
+  .m-dock .m-tab-body {
+    order: 2;
+    width: 100%;
+  }
+  .m-dock .m-tab-body [data-tab-inner] {
+    max-width: 600px;
+    padding-top: 6px;
+    padding-bottom: 0;
+    font-size: 15px;
+    line-height: 1.42;
+  }
+  .m-dock .m-dock-link {
+    margin-top: 6px;
   }
 }
-@media (max-height: 490px), (max-width: 1023px) and (max-height: 740px) {
-  .m-dock .m-tab-body {
+/* Very little height: the heading goes, then the text steps down a size */
+@media (max-width: 1023px) and (max-height: 520px) {
+  .m-dock .m-dock-title {
     display: none;
   }
   .m-dock .m-dock-tabs {
-    margin-top: 16px;
+    margin-top: 0;
   }
 }
-@media (max-height: 490px), (max-width: 1023px) and (max-height: 610px) {
-  .m-dock .m-tab-btn {
-    padding-top: 9px;
-    padding-bottom: 0;
-  }
-  .m-dock .m-tab-gap {
-    height: 8px;
-  }
-  .m-dock .m-dock-title {
-    font-size: 19px;
+@media (max-width: 479px) and (max-height: 440px) {
+  .m-dock {
+    padding-top: 80px;
+    padding-bottom: 8px;
   }
   .m-dock-grid {
-    gap: 16px;
+    gap: 12px;
+  }
+}
+@media (max-width: 1023px) and (max-height: 340px), (max-width: 340px) and (max-height: 500px),
+  (max-width: 479px) and (max-height: 440px) {
+  .m-dock .m-tab-btn {
+    padding: 5px 0;
+  }
+  .m-dock .m-tab-btn .m-ui {
+    font-size: 14px;
+  }
+  .m-dock .m-tab-body [data-tab-inner] {
+    font-size: 13px;
+    line-height: 1.38;
   }
 }
 @media (orientation: landscape) and (max-height: 560px) and (min-width: 480px) and (max-width: 1023px) {

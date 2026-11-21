@@ -15,8 +15,8 @@ export function legalMetadata(title: string, description: string, path: string):
       description,
       type: "website",
       url: path,
-      siteName: "Zac Klein",
-      images: [{ url: "/og.jpg", width: 1200, height: 630, alt: "Zac Klein" }],
+      siteName: "Founder",
+      images: [{ url: "/og.jpg", width: 1200, height: 630, alt: "Founder" }],
     },
     twitter: { card: "summary_large_image", title, images: ["/og.jpg"] },
   };

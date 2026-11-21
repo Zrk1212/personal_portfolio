@@ -14,7 +14,7 @@ export function Logo({ className = "" }: { className?: string }) {
   return (
     <span className={`inline-flex items-center gap-2.5 whitespace-nowrap ${className}`}>
       <LogoMark className="h-[22px] w-[22px] shrink-0" />
-      <span className="text-[18px] font-[620] leading-none tracking-[-0.012em]">Zac Klein</span>
+      <span className="text-[18px] font-[620] leading-none tracking-[-0.012em]">Founder</span>
     </span>
   );
 }

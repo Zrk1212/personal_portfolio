@@ -39,6 +39,7 @@ export const SKILLS = [
 
 export type Project = {
   title: string;
+  short?: string; // shorter name for the compact app list
   blurb: string;
   tags: string[];
   year: string;
@@ -76,6 +77,7 @@ export const PROJECTS: Project[] = [
   },
   {
     title: "Vantage Recruiting",
+    short: "Vantage",
     blurb:
       "An AI recruiting app for high school lacrosse players, live on the App Store and the web with paying users. It writes personalized emails to college coaches, tracks who opened them, and keeps the whole recruiting timeline in one place.",
     tags: ["iOS app", "Web app", "Claude AI"],
@@ -100,6 +102,7 @@ export const PROJECTS: Project[] = [
   },
   {
     title: "Dr. Rob Chiropractic",
+    short: "Dr. Rob",
     blurb:
       "A polished marketing site for a chiropractic and sports-medicine practice. Credentials, Active Release Technique, the conditions he treats, and booking, built to turn visitors into patients.",
     tags: ["React", "Vite", "Local business"],

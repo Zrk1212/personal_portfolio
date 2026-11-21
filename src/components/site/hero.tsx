@@ -187,7 +187,10 @@ export function Hero() {
         leftInner.style.transform = "";
         const lr = left.getBoundingClientRect();
         const top = lr.top - dock.getBoundingClientRect().top;
-        const sideBySide = slot ? lr.left < slot.getBoundingClientRect().left - 1 : false;
+        // Same condition as the side-by-side rule in globals.css
+        const sideBySide = window.matchMedia(
+          "(min-width: 1024px), (orientation: landscape) and (max-height: 560px) and (min-width: 480px)"
+        ).matches;
         const minTop = NAV_H + 8;
         const maxBottom = H - 10;
         if (sideBySide) {
@@ -481,6 +484,12 @@ export function Hero() {
       holdHash();
       releaseHash();
     }, 1500);
+    // The stacked panel is sized against the app list, so follow the list's height
+    const colWatch = new ResizeObserver(() => {
+      measure();
+      apply();
+    });
+    if (leftInnerRef.current) colWatch.observe(leftInnerRef.current);
     window.addEventListener("resize", onResize);
     window.addEventListener("orientationchange", onResize);
     window.addEventListener("pageshow", onResize);
@@ -488,6 +497,7 @@ export function Hero() {
     return () => {
       window.clearTimeout(settleTimer);
       window.clearTimeout(hashTimer);
+      colWatch.disconnect();
       for (const type of ["wheel", "touchstart", "keydown", "pointerdown"]) {
         window.removeEventListener(type, releaseHash);
       }
@@ -585,7 +595,8 @@ export function Hero() {
           {/* The app list on the left, the panel's slot on the right */}
           <div ref={dockRef} className="m-dock">
             <div className="m-wrap m-dock-grid">
-              <div ref={slotRef} className="m-dock-slot">
+              <div className="m-dock-slot">
+                <div ref={slotRef} className="m-dock-slot-box">
                 <noscript>
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
@@ -594,6 +605,7 @@ export function Hero() {
                     className="h-full w-full rounded-xl object-cover object-top"
                   />
                 </noscript>
+                </div>
               </div>
               <div
                 ref={leftRef}
@@ -667,15 +679,22 @@ function BuiltColumn({
           duration={8}
           items={PROJECTS.map((p) => ({
             key: p.title,
-            title: p.title,
+            title: p.short ? (
+              <>
+                <span className="m-dock-long">{p.title}</span>
+                <span className="m-dock-short">{p.short}</span>
+              </>
+            ) : (
+              p.title
+            ),
             body: (
               <>
-                <span className="m-dock-blurb line-clamp-3 lg:line-clamp-none">{p.blurb}</span>
+                <span className="m-dock-blurb block">{p.blurb}</span>
                 <a
                   href={p.href}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="m-focus m-th m-hide-shorter mt-2 inline-block rounded text-[var(--fg)] underline decoration-[color-mix(in_srgb,currentColor_40%,transparent)] underline-offset-4 hover:decoration-current max-lg:hidden"
+                  className="m-dock-link m-focus m-th mt-2 inline-block rounded text-[var(--fg)] underline decoration-[color-mix(in_srgb,currentColor_40%,transparent)] underline-offset-4 hover:decoration-current"
                 >
                   Visit {p.url}
                 </a>

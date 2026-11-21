@@ -3,7 +3,7 @@ import Link from "next/link";
 import { SiteShell } from "@/components/site/shell";
 
 export const metadata: Metadata = {
-  title: "Page not found · Zac Klein",
+  title: "Page not found · Founder",
   description: "That page doesn't exist. Head back to the homepage or book a session.",
   robots: { index: false },
 };

@@ -128,7 +128,7 @@ function Nav({ home, clear }: { home: boolean; clear: boolean }) {
       <nav className="flex h-[72px] items-center justify-between gap-3 px-4 sm:gap-6 sm:px-8">
         <Link
           href={home ? "#top" : "/"}
-          aria-label="Zac Klein, home"
+          aria-label="Founder, home"
           className="m-focus shrink-0 rounded"
         >
           <Logo />
@@ -271,15 +271,15 @@ export function TabList({
   }, [items.length]);
 
   return (
-    <div ref={rootRef} className="group/tabs">
+    <div ref={rootRef} className="m-tabs group/tabs">
       {items.map((item, i) => {
         const on = i === active;
         const panelId = `${id}-panel-${i}`;
         const btnId = `${id}-btn-${i}`;
         return (
-          <div key={item.key} className="relative">
+          <div key={item.key} className="m-tab relative">
             <div
-              className="m-th absolute inset-x-0 top-0 h-px"
+              className="m-tab-rule m-th absolute inset-x-0 top-0 h-px"
               style={{ backgroundColor: "var(--rule)" }}
             />
             {on && (
@@ -304,7 +304,7 @@ export function TabList({
               className="m-tab-btn m-focus group/tab relative block w-full rounded pb-1 pt-[14px] text-left"
             >
               <span
-                className={`absolute -left-5 top-[22px] hidden h-[7px] w-[7px] rounded-full bg-current transition-opacity duration-300 xl:block ${
+                className={`m-tab-dot absolute -left-5 top-[22px] hidden h-[7px] w-[7px] rounded-full bg-current transition-opacity duration-300 xl:block ${
                   on ? "opacity-100" : "opacity-0"
                 }`}
               />

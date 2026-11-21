@@ -30,14 +30,14 @@ export function Closing() {
             style={{ "--cl-r": "-14deg", "--cl-d": "0s" } as CSSProperties}
           >
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src="/logos/vantage-app.webp" alt="" width={144} height={144} loading="lazy" decoding="async" className="cl-keycap-img" />
+            <img src="/logos/app-store.svg" alt="" width={144} height={144} loading="lazy" decoding="async" className="cl-keycap-img" />
           </div>
           <div
-            className="cl-keycap cl-keycap-light right-[2%] top-0 h-24 w-24 sm:h-28 sm:w-28"
+            className="cl-keycap cl-keycap-app right-[2%] top-0 h-24 w-24 sm:h-28 sm:w-28"
             style={{ "--cl-r": "12deg", "--cl-d": "-2.2s" } as CSSProperties}
           >
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src="/logos/uva-v-sabre.svg" alt="" width={248} height={196} loading="lazy" decoding="async" className="w-[58%] h-auto" />
+            <img src="/logos/vantage-app.webp" alt="" width={112} height={112} loading="lazy" decoding="async" className="cl-keycap-img" />
           </div>
         </div>
       </div>

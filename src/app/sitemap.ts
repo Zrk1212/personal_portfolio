@@ -1,6 +1,6 @@
 import type { MetadataRoute } from "next";
 
-const BASE = "https://zrk.ventures";
+const BASE = "https://founder.zrk.ventures";
 
 export default function sitemap(): MetadataRoute.Sitemap {
   return [
@@ -9,5 +9,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${BASE}/contact`, changeFrequency: "yearly", priority: 0.5 },
     { url: `${BASE}/privacy`, changeFrequency: "yearly", priority: 0.2 },
     { url: `${BASE}/terms`, changeFrequency: "yearly", priority: 0.2 },
+    { url: `${BASE}/cookies`, changeFrequency: "yearly", priority: 0.2 },
   ];
 }

@@ -15,22 +15,6 @@ function Item({ label, href }: { label: string; href: string }) {
       </a>
     );
   }
-  if (href.startsWith("mailto:")) {
-    return (
-      <a href={href} className={cls} style={style}>
-        {label.split("@").map((part, i) => (
-          <span key={i}>
-            {i > 0 && (
-              <>
-                <wbr />@
-              </>
-            )}
-            {part}
-          </span>
-        ))}
-      </a>
-    );
-  }
   // Section links behave like the ones in the nav: a plain jump within the page
   if (href.includes("#")) {
     return (
@@ -39,9 +23,8 @@ function Item({ label, href }: { label: string; href: string }) {
       </a>
     );
   }
-  // /apify has its own fonts and look, so it is not fetched ahead of a click
   return (
-    <Link href={href} prefetch={href === "/apify" ? false : undefined} className={cls} style={style}>
+    <Link href={href} className={cls} style={style}>
       {label}
     </Link>
   );
@@ -71,11 +54,11 @@ export function Footer({ home }: { home: boolean }) {
       links: PROJECTS.map((p): FooterLink => [p.title, p.href]),
     },
     {
-      title: "More",
+      title: "Legal",
       links: [
-        ["GitHub", "https://github.com/Zrk1212"],
-        ["Data tools on Apify", "/apify"],
-        ["zacklein555@gmail.com", "mailto:zacklein555@gmail.com"],
+        ["Privacy", "/privacy"],
+        ["Terms", "/terms"],
+        ["Cookie use", "/cookies"],
       ],
     },
   ];
@@ -91,10 +74,10 @@ export function Footer({ home }: { home: boolean }) {
               className="m-focus group inline-flex items-center gap-3 rounded text-[27px] font-[600] leading-none tracking-[-0.03em]"
             >
               <LogoMark className="h-[22px] w-auto shrink-0 transition-transform duration-300 group-hover:-rotate-6 motion-reduce:transition-none" />
-              Zac Klein
+              Founder
             </Link>
             <p className="m-th mt-3 max-w-[320px] text-[14px] leading-[1.5]" style={{ color: "var(--muted)" }}>
-              One-on-one AI app tutoring for high schoolers. In person in Westchester or over Zoom.
+              Founder is one-on-one AI app tutoring for high schoolers, taught by Zac Klein. In person in Westchester or over Zoom.
             </p>
           </div>
           <nav aria-label="Footer" className="grid grid-cols-2 gap-x-8 gap-y-10 sm:grid-cols-4 sm:gap-x-6 lg:grid-cols-[repeat(4,auto)] lg:gap-x-10">
@@ -112,32 +95,8 @@ export function Footer({ home }: { home: boolean }) {
             ))}
           </nav>
         </div>
-        <div className="flex flex-col gap-3 sm:flex-row sm:items-baseline sm:justify-between sm:gap-8">
-          <p className="m-th text-[13px]" style={{ color: "var(--muted)" }}>
-            © 2026 Zac Klein
-          </p>
-          <ul className="flex gap-5 text-[13px]">
-            {(
-              [
-                ["Privacy", "/privacy"],
-                ["Terms", "/terms"],
-              ] as FooterLink[]
-            ).map(([label, href]) => (
-              <li key={href}>
-                <Link
-                  href={href}
-                  className="m-focus m-th inline-block rounded py-1.5 underline decoration-[color-mix(in_srgb,currentColor_40%,transparent)] underline-offset-4 transition-colors duration-150 hover:text-[var(--fg)]! hover:decoration-current"
-                  style={{ color: "var(--muted)" }}
-                >
-                  {label}
-                </Link>
-              </li>
-            ))}
-          </ul>
-        </div>
-        <p className="m-th mt-3 max-w-[640px] text-[13px] leading-[1.5]" style={{ color: "var(--muted)" }}>
-          Nothing on this site guarantees admission to any college. Not affiliated with or endorsed by
-          any college, Common App or any company named here.
+        <p className="m-th text-[13px]" style={{ color: "var(--muted)" }}>
+          © 2026 Founder by Zac Klein
         </p>
       </div>
     </footer>
