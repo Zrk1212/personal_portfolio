@@ -134,7 +134,7 @@ export function About() {
             </h2>
             <div className="m-body m-th mt-5 max-w-[480px] space-y-4" style={{ color: "var(--muted)" }}>
               <p>
-                I&apos;m a student at the University of Virginia and the founder
+                I&apos;m a data science student at the University of Virginia and the founder
                 of Vantage Recruiting, an AI recruiting platform for high
                 school lacrosse players. It&apos;s live on the App Store and
                 the web with 500+ users. I&apos;ve designed, built and launched
