@@ -134,15 +134,16 @@ export function About() {
             </h2>
             <div className="m-body m-th mt-5 max-w-[480px] space-y-4" style={{ color: "var(--muted)" }}>
               <p>
-                I&apos;m a data science student at the University of Virginia and the founder
-                of Vantage Recruiting, an AI recruiting platform for high
-                school lacrosse players. It&apos;s live on the App Store and
-                the web with 500+ users. I&apos;ve designed, built and launched
-                multiple online businesses with AI, each one from an idea to a
-                real product. That is the path I walk your student through.
+                I&apos;m the founder of Vantage Recruiting, an AI recruiting
+                platform for high school lacrosse players. It&apos;s live on
+                the App Store and the web with 500+ users. I&apos;ve designed,
+                built and launched multiple apps and online businesses with
+                AI, each one from an idea to a real product.
               </p>
               <p>
-                I teach the exact tools I use every week, one-on-one, at your
+                Students work with me one-on-one over Zoom. They start with
+                their own idea, write the plan and build it into a live app in
+                a few weeks. I teach the exact tools I use every week, at each
                 student&apos;s pace. They finish with a real business they
                 built themselves, and they can speak about it with confidence
                 on their college applications.

@@ -13,7 +13,7 @@ export default function PrivacyPage() {
   return (
     <LegalPage
       title="Privacy policy"
-      intro="This site, Founder, is run by Zac Klein, an individual and a University of Virginia student from Chappaqua, New York. It is written for parents, so this page is short and plain. It explains what happens to the details you share with me."
+      intro="This site, Founder, is run by Zac Klein, an individual from Chappaqua, New York. It is written for parents, so this page is short and plain. It explains what happens to the details you share with me."
       sections={[
         {
           heading: "What I collect",
@@ -21,7 +21,7 @@ export default function PrivacyPage() {
             <>
               <p>
                 The only thing the site collects is what you type into the contact form. That is
-                your name, your email address, your student&apos;s grade and your message.
+                your name, your email address, the student&apos;s grade and your message.
               </p>
               <p>
                 There are no accounts, no analytics and no advertising or tracking cookies on this

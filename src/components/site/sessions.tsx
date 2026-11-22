@@ -44,7 +44,7 @@ export function Sessions() {
           </h2>
           <p className="m-body m-th mt-4 max-w-[440px]" style={{ color: "var(--muted)" }}>
             A bundle of five gives each step its own one-on-one session. The
-            last one ends with your student showcasing a live business.
+            last one ends with students showcasing a live business.
           </p>
           <div className="mt-10 md:mt-auto md:pt-16">
             <TabList

@@ -21,9 +21,8 @@ export default function TermsPage() {
           heading: "What the service is",
           body: (
             <p>
-              Founder offers one-on-one tutoring sessions with Zac Klein, an individual and a
-              University of Virginia student from Chappaqua, New York. Sessions are held in person
-              around Chappaqua and Westchester, or over Zoom. In them, a high school student builds
+              Founder offers one-on-one tutoring sessions with Zac Klein, an individual from
+              Chappaqua, New York. Sessions are held over Zoom. In them, a high school student builds
               a web or iOS app, or an online business, using AI tools.
             </p>
           ),
@@ -59,8 +58,7 @@ export default function TermsPage() {
           body: (
             <p>
               This site and service are not affiliated with, endorsed by or sponsored by Common
-              App, any college or university named on the site (including the University of
-              Virginia), Anthropic, OpenAI, Google, Apple or Vercel. Their
+              App, any college or university named on the site, Anthropic, OpenAI, Google, Apple or Vercel. Their
               names and logos belong to their owners.
             </p>
           ),

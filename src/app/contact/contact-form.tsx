@@ -210,7 +210,7 @@ export default function ContactForm() {
                     />
                   </Field>
 
-                  <Field label="Tell me a little about your student">
+                  <Field label="Tell me a little about the student">
                     <textarea
                       name="message"
                       required

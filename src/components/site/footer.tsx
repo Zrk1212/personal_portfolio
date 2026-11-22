@@ -77,7 +77,7 @@ export function Footer({ home }: { home: boolean }) {
               Founder
             </Link>
             <p className="m-th mt-3 max-w-[320px] text-[14px] leading-[1.5]" style={{ color: "var(--muted)" }}>
-              Founder is one-on-one AI app tutoring for high schoolers, taught by Zac Klein. In person in Westchester or over Zoom.
+              Founder is one-on-one AI app tutoring for high schoolers, taught by Zac Klein over Zoom.
             </p>
           </div>
           <nav aria-label="Footer" className="grid grid-cols-2 gap-x-8 gap-y-10 sm:grid-cols-4 sm:gap-x-6 lg:grid-cols-[repeat(4,auto)] lg:gap-x-10">

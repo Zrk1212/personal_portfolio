@@ -36,7 +36,7 @@ export const metadata: Metadata = {
   metadataBase: new URL("https://founder.zrk.ventures"),
   title: "Founder · Teaching high schoolers to build real apps with AI",
   description:
-    "One-on-one sessions where high school students build and launch a real web or iOS app with AI. In person in Westchester or over Zoom.",
+    "One-on-one sessions where high school students build and launch a real web or iOS app with AI. One-on-one over Zoom.",
   applicationName: "Founder",
   authors: [{ name: "Zac Klein", url: "https://founder.zrk.ventures" }],
   openGraph: {

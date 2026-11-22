@@ -9,7 +9,7 @@ export const SKILLS = [
   },
   {
     title: "Building with Claude Code",
-    body: "An AI assistant that writes code while your student directs it and makes the decisions.",
+    body: "An AI assistant that writes code while students direct it and make the decisions.",
   },
   {
     title: "Putting it online",
@@ -66,7 +66,7 @@ export const PROJECTS: Project[] = [
   {
     title: "Hoos Planner",
     blurb:
-      "An AI schedule advisor for UVA undergrads. Describe your semester and it builds a conflict-free week from real class data, tracks every requirement for your school and major, and plugs straight into Claude and ChatGPT.",
+      "An AI schedule advisor for college students. Describe your semester and it builds a conflict-free week from real class data, tracks every requirement for your school and major, and plugs straight into Claude and ChatGPT.",
     tags: ["Next.js", "AI", "Supabase"],
     year: "2026",
     hue: "#3b6cf6",
@@ -91,7 +91,7 @@ export const PROJECTS: Project[] = [
   {
     title: "Bubble",
     blurb:
-      "A money planner for college clubs, made at UVA. Admins track dues, income and spending in one place, and members see the club's totals and where every dollar went. It never moves money. It is a planning and transparency tool, and it is free.",
+      "A money planner for college clubs. Admins track dues, income and spending in one place, and members see the club's totals and where every dollar went. It never moves money. It is a planning and transparency tool, and it is free.",
     tags: ["Next.js", "Tailwind", "Postgres"],
     year: "2026",
     hue: "#0d9488",
@@ -144,7 +144,7 @@ export const PROCESS = [
   {
     no: "05",
     title: "Launch and demo",
-    body: "The app goes live with a real link, or onto their iPhone through TestFlight. The session ends with your student showing it to you.",
+    body: "The app goes live with a real link, or onto their iPhone through TestFlight. The session ends with students showing you what they built.",
     outcome: "A live app with its own link",
   },
 ];
@@ -169,7 +169,7 @@ export type PriceTrack = {
 export const PRICING: PriceTrack[] = [
   {
     track: "Web app",
-    blurb: "A web app with a real link your student can share with anyone.",
+    blurb: "A web app with a real link students can share with anyone.",
     featured: true,
     rows: [
       { length: "1 hour", single: "$120", bundle: "$475", each: "$95 each" },
@@ -189,16 +189,16 @@ export const PRICING: PriceTrack[] = [
 
 export const FAQ = [
   {
-    q: "Does my student need coding experience?",
+    q: "Do students need coding experience?",
     a: "No. We start from their idea, and I teach what they need as we go.",
   },
   {
     q: "How many sessions does it take?",
-    a: "About five sessions for a fully built web app. An iPhone app takes the same five sessions, plus the time Apple takes to review it, which can mean a few rounds of fixes and resubmitting. In total, plan on about 5 to 7 hours, depending on the app your student wants to build and how involved they are.",
+    a: "About five sessions for a fully built web app. An iPhone app takes the same five sessions, plus the time Apple takes to review it, which can mean a few rounds of fixes and resubmitting. In total, plan on about 5 to 7 hours, depending on the app and how involved the student is.",
   },
   {
     q: "Can we talk before booking a session?",
-    a: "Yes. You can book a free 30-minute consultation over Zoom. We'll talk about your student, how the sessions work and my background, and I'll answer your questions.",
+    a: "Yes. You can book a free 30-minute consultation over Zoom. We'll talk about your goals, how the sessions work and my background, and I'll answer your questions.",
   },
   {
     q: "What do they need?",
@@ -210,6 +210,6 @@ export const FAQ = [
   },
   {
     q: "Is this cheating?",
-    a: "No. Your student makes the plan, makes the decisions and can explain every part of what they built. It's also a real project they can talk about.",
+    a: "No. Students make the plan, make the decisions and can explain every part of what they built. It's also a real project they can talk about.",
   },
 ];

@@ -251,7 +251,7 @@ export function Skills() {
       <div className="m-wrap">
         <SectionHead
           title="Skills they keep after the app ships."
-          sub="Your student brings the idea and leaves with a live app. Along the way they learn how to work with AI in ways that carry over to anything they build next."
+          sub="Students bring the idea and leave with a live app. Along the way they learn how to work with AI in ways that carry over to anything they build next."
         />
         <div className="mt-12 grid gap-x-8 gap-y-14 md:grid-cols-2">
           {first.map((s, i) => (

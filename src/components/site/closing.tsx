@@ -14,7 +14,7 @@ export function Closing() {
             <span className="cl-fade block">Let&apos;s make it real.</span>
           </h2>
           <p className="m-body m-th mt-5 max-w-[460px]" style={{ color: "var(--muted)" }}>
-            Tell me a little about your student and I&apos;ll get back to you within a day.
+            Tell me a little about the student and I&apos;ll get back to you within a day.
           </p>
           <Link href="/contact" className="m-btn m-btn-primary cl-cta m-focus mt-9">
             <LogoMark className="h-[18px] w-auto shrink-0" />
