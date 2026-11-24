@@ -31,9 +31,25 @@ export default function TermsPage() {
           heading: "Booking and payment",
           body: (
             <p>
-              Sessions are booked and paid for directly with Zac. Payment is not taken through this
-              site.
+              Sessions are booked and paid for directly with Zac, by Zelle, Venmo or PayPal. Payment
+              is not taken through this site. A single session is paid before it starts. A bundle
+              of five is paid in full before the first session.
             </p>
+          ),
+        },
+        {
+          heading: "Rescheduling and refunds",
+          body: (
+            <>
+              <p>
+                To move a session, give at least 24 hours&apos; notice. With less notice, the
+                session counts as used.
+              </p>
+              <p>
+                If you stop partway through a bundle, the sessions you used are charged at the
+                single-session price. Anything left over from what you paid is refunded.
+              </p>
+            </>
           ),
         },
         {

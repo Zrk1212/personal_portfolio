@@ -215,8 +215,16 @@ export const FAQ = [
     a: "About five sessions for a fully built web app. An iPhone app takes the same five sessions, plus the time Apple takes to review it, which can mean a few rounds of fixes and resubmitting. In total, plan on about 5 to 7 hours, depending on the app and how involved the student is.",
   },
   {
-    q: "Can we talk before booking a session?",
-    a: "Yes. You can book a free 30-minute consultation over Zoom. We'll talk about your goals, how the sessions work and my background, and I'll answer your questions.",
+    q: "What if they don't have an idea yet?",
+    a: "That's fine. The first session starts with something they care about and shapes it into a business: who it's for, what problem it solves and how it could make money.",
+  },
+  {
+    q: "Should we book 1-hour or 2-hour sessions?",
+    a: "One hour works for most students. Two-hour sessions make sense for a bigger idea or an iPhone app. We can decide together on the free consultation call.",
+  },
+  {
+    q: "How do sessions work?",
+    a: "Sessions are one-on-one over Zoom, scheduled at your family's pace around school and sports. Between sessions, students keep building on their own, usually for about an hour. Parents are welcome to join any session.",
   },
   {
     q: "What do they need?",
@@ -224,10 +232,34 @@ export const FAQ = [
   },
   {
     q: "Do they need AI accounts?",
-    a: "Yes. We will need a Pro subscription to Claude, ChatGPT or Gemini.",
+    a: "Yes. We will need a Pro subscription to Claude, ChatGPT or Gemini, which is about $20 a month.",
+  },
+  {
+    q: "Are there other costs?",
+    a: "Only for an iPhone app. Apple's developer program is $99 a year, and a parent enrolls because Apple requires an adult. A web app can go live for free. A custom domain is optional.",
+  },
+  {
+    q: "What will they have at the end?",
+    a: "A live app with its own link, or an iPhone app on their phone through TestFlight. They also keep the one-page business model and the plan they wrote. The app, the code and the accounts all belong to your family.",
+  },
+  {
+    q: "How does this help with college applications?",
+    a: "Students finish with a real business they built themselves. They can write about it and speak about it with confidence. It does not guarantee admission anywhere.",
   },
   {
     q: "Is this cheating?",
     a: "No. Students make the plan, make the decisions and can explain every part of what they built. It's also a real project they can talk about.",
+  },
+  {
+    q: "How does payment work?",
+    a: "You pay me directly by Zelle, Venmo or PayPal. A single session is paid before it starts. A bundle is paid in full before the first session.",
+  },
+  {
+    q: "What if we need to reschedule or stop?",
+    a: "Tell me at least 24 hours ahead and we'll move the session. With less notice, the session counts as used. If you stop partway through a bundle, the sessions you used are charged at the single-session price and I refund the rest.",
+  },
+  {
+    q: "Can we talk before booking a session?",
+    a: "Yes. You can book a free 30-minute consultation over Zoom. We'll talk about your goals, how the sessions work and my background, and I'll answer your questions.",
   },
 ];
