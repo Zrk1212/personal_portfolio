@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { PRICING } from "@/app/content";
+import { BUNDLE_EXTRAS, PRICING } from "@/app/content";
 import zacPhoto from "../../../public/about/zac.jpg";
 
 /* ---------------- Pricing ---------------- */
@@ -92,6 +92,35 @@ export function Pricing() {
               </Link>
             </div>
           ))}
+        </div>
+
+        <div className="m-th mt-8 rounded-xl p-6 sm:p-8" style={{ backgroundColor: "var(--tile)" }}>
+          <h3 className="m-h3">Every bundle of 5 includes</h3>
+          <ul className="mt-6 grid gap-6 md:grid-cols-3 md:gap-8">
+            {BUNDLE_EXTRAS.map((x) => (
+              <li key={x.title} className="m-th border-t pt-5" style={{ borderColor: "var(--rule)" }}>
+                <div className="flex items-center gap-2.5 text-[16px] font-[480]">
+                  <svg viewBox="0 0 16 16" className="pr-best m-th h-4 w-4 shrink-0" aria-hidden>
+                    <circle cx="8" cy="8" r="7.25" fill="none" stroke="currentColor" strokeWidth="1.5" />
+                    <path d="M4.8 8.2l2.1 2.1 4.3-4.6" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                  </svg>
+                  {x.title}
+                </div>
+                <p className="m-th mt-2 max-w-[400px] text-[15px] leading-[1.45]" style={{ color: "var(--muted)" }}>
+                  {x.body}
+                </p>
+                {x.href && (
+                  <Link
+                    href={x.href}
+                    prefetch={false}
+                    className="m-focus mt-2 inline-block rounded text-[15px] font-[440] text-[var(--fg)] underline decoration-[color-mix(in_srgb,currentColor_40%,transparent)] underline-offset-4 hover:decoration-current"
+                  >
+                    {x.link}
+                  </Link>
+                )}
+              </li>
+            ))}
+          </ul>
         </div>
 
         <p className="m-body m-th mx-auto mt-10 max-w-[640px] text-center" style={{ color: "var(--muted)" }}>

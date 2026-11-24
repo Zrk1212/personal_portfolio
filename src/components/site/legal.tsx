@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { SiteShell } from "./shell";
 
-export const LEGAL_UPDATED = "November 20, 2026";
+export const LEGAL_UPDATED = "November 24, 2026";
 export const LEGAL_EMAIL = "zacklein555@gmail.com";
 
 /* Metadata for a secondary legal page, same pattern as /contact */
@@ -22,7 +22,7 @@ export function legalMetadata(title: string, description: string, path: string):
   };
 }
 
-export type LegalSection = { heading: string; body: React.ReactNode };
+export type LegalSection = { heading: string; body: React.ReactNode; id?: string };
 
 export function EmailLink() {
   return (
@@ -56,7 +56,7 @@ export function LegalPage({
               </p>
               <p className="m-body mt-8">{intro}</p>
               {sections.map((s) => (
-                <section key={s.heading} className="mt-12">
+                <section key={s.heading} id={s.id} className="mt-12 scroll-mt-[96px]">
                   <h2 className="m-h3">{s.heading}</h2>
                   <div
                     className="mt-4 space-y-4 text-[16px] leading-[1.6]"

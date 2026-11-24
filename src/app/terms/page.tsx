@@ -37,11 +37,35 @@ export default function TermsPage() {
           ),
         },
         {
+          heading: "The bundle guarantee",
+          id: "guarantee",
+          body: (
+            <>
+              <p>
+                If you buy a bundle of five sessions and the student attends all five, the app
+                will be live by the end. If it is not, I will keep working with the student over
+                Zoom, at no extra charge, until it is.
+              </p>
+              <p>
+                Live means a web app that opens at its own link, or an iOS app installed on the
+                student&apos;s iPhone through TestFlight. Approval for the App Store is
+                Apple&apos;s decision, so it is not part of the guarantee.
+              </p>
+              <p>
+                The guarantee applies to the app described in the plan the student writes in the
+                second session. It covers my time. It does not cover other companies&apos; costs,
+                such as AI subscriptions or the Apple developer program.
+              </p>
+            </>
+          ),
+        },
+        {
           heading: "No promised outcomes",
           body: (
             <>
               <p>
-                Nothing on this site guarantees admission to any college or any other result. The
+                Apart from the bundle guarantee above, nothing on this site guarantees admission to
+                any college or any other result. The
                 home page types playful prompts, such as asking an AI to build a business with no
                 mistakes, as an illustration of how the tools work. They are not a promise of
                 anything.

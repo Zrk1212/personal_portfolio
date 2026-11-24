@@ -187,6 +187,24 @@ export const PRICING: PriceTrack[] = [
   },
 ];
 
+// What a bundle of five adds beyond the lower price. `href` links the fine print.
+export const BUNDLE_EXTRAS: { title: string; body: string; href?: string; link?: string }[] = [
+  {
+    title: "Help between sessions",
+    body: "Questions don't have to wait for the next session. Email me and I'll answer.",
+  },
+  {
+    title: "A recap after every session",
+    body: "You get a short note on what was built and what comes next.",
+  },
+  {
+    title: "A finish guarantee",
+    body: "If a student attends all five sessions and the app isn't live, I keep working with them at no charge until it is.",
+    href: "/terms#guarantee",
+    link: "How the guarantee works",
+  },
+];
+
 export const FAQ = [
   {
     q: "Do students need coding experience?",
