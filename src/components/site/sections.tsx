@@ -17,8 +17,8 @@ export function Pricing() {
           Simple pricing, by the session.
         </h2>
         <p className="m-body m-th mx-auto mt-5 max-w-[520px] text-center" style={{ color: "var(--muted)" }}>
-          With a bundle of 5, students will build an entire online business
-          they can put on their Common Application.
+          With a bundle of 5, students turn a passion into a real online
+          business.
         </p>
 
         <div className="mt-14 grid gap-8 md:grid-cols-2">

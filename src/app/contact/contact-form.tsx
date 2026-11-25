@@ -105,14 +105,12 @@ export default function ContactForm() {
               <h1 className="m-h1 max-w-[440px] text-balance">Book a free consultation</h1>
               <p className="m-body mt-5 max-w-[420px]" style={{ color: "var(--muted)" }}>
                 Share a few details and I&apos;ll get back to you within a day
-                to set up a free 30-minute consultation over Zoom. No pressure,
-                and no app idea needed yet.
+                to set up a 30-minute consultation over Zoom.
               </p>
               <div className="mt-10 max-w-[420px]">
                 {[
                   ["Email", "zacklein555@gmail.com", "mailto:zacklein555@gmail.com"],
                   ["GitHub", "github.com/Zrk1212", "https://github.com/Zrk1212"],
-                  ["First call", "Free, 30 minutes, over Zoom", ""],
                 ].map(([label, value, href]) => (
                   <div
                     key={label}

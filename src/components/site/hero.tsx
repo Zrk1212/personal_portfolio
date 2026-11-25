@@ -570,7 +570,7 @@ export function Hero() {
               style={{ opacity: 0 }}
             >
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src="/hero/common-app.svg" alt="" className="w-[52%]" />
+              <img src="/hero/wireframe.svg" alt="" className="w-[86%]" />
               <div className="m-screen-fx absolute inset-0" />
             </div>
 
@@ -638,7 +638,7 @@ export function Hero() {
                 className="pointer-events-none absolute inset-0 grid place-items-center overflow-hidden rounded-xl bg-white"
               >
                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img ref={coverLogoRef} src="/hero/common-app.svg" alt="" className="w-[52%]" />
+                <img ref={coverLogoRef} src="/hero/wireframe.svg" alt="" className="w-[86%]" />
               </div>
               {/* The light of the scene on the display: dimming, a warm cast, a streak of glare */}
               <div

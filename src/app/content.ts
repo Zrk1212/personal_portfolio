@@ -12,16 +12,16 @@ export const SKILLS = [
     body: "An AI assistant that writes code while students direct it and make the decisions.",
   },
   {
-    title: "Putting it online",
-    body: "Publishing the app on Vercel so it has a real link anyone can open.",
+    title: "Launching it online",
+    body: "Publishing the app on Vercel so it has a live, accessible link anyone can open.",
   },
   {
     title: "An AI feature",
-    body: "Adding something smart inside their app, like a chat helper or a feature that writes or sorts for the user.",
+    body: "Incorporating artificial intelligence inside their app, such as a chat helper or features that write or sort for the user.",
   },
   {
     title: "Automations",
-    body: "Having AI handle a repetitive task for them, like a weekly summary or sorting messages.",
+    body: "Letting AI handle a repetitive task, such as a weekly summary or sorting messages.",
   },
   {
     title: "Skills",
@@ -33,7 +33,7 @@ export const SKILLS = [
   },
   {
     title: "Personal feedback",
-    body: "Every session I look at what they built and tell them what to do better next.",
+    body: "I review their progress and provide tailored guidance on how they can improve.",
   },
 ];
 
@@ -120,7 +120,7 @@ export const PROCESS = [
   {
     no: "01",
     title: "Business model",
-    body: "They start with something they care about and shape it into a business: who it's for, what problem it solves and how it could make money.",
+    body: "Students start with something they care about and shape it into a business: who it's for, what problem it solves and how it could generate income.",
     outcome: "A one-page business model",
   },
   {
@@ -169,7 +169,7 @@ export type PriceTrack = {
 export const PRICING: PriceTrack[] = [
   {
     track: "Web app",
-    blurb: "A web app with a real link students can share with anyone.",
+    blurb: "A web app with a live link students can share with anyone.",
     featured: true,
     rows: [
       { length: "1 hour", single: "$120", bundle: "$475", each: "$95 each" },
@@ -208,7 +208,7 @@ export const BUNDLE_EXTRAS: { title: string; body: string; href?: string; link?:
 export const FAQ = [
   {
     q: "Do students need coding experience?",
-    a: "No. We start from their idea, and I teach what they need as we go.",
+    a: "No. We start from their idea, and I teach what they need as we build.",
   },
   {
     q: "How many sessions does it take?",
@@ -216,7 +216,7 @@ export const FAQ = [
   },
   {
     q: "What if they don't have an idea yet?",
-    a: "That's fine. The first session starts with something they care about and shapes it into a business: who it's for, what problem it solves and how it could make money.",
+    a: "That's fine. In the first session, we start with something they care about and shape it into a business: who it's for, what problem it solves and how it could generate income.",
   },
   {
     q: "Should we book 1-hour or 2-hour sessions?",
@@ -224,7 +224,7 @@ export const FAQ = [
   },
   {
     q: "How do sessions work?",
-    a: "Sessions are one-on-one over Zoom, scheduled at your family's pace around school and sports. Between sessions, students keep building on their own, usually for about an hour. Parents are welcome to join any session.",
+    a: "Sessions are one-on-one over Zoom, scheduled around each student's commitments. Between sessions, students keep building on their own. Parents are welcome to join any session.",
   },
   {
     q: "What do they need?",
@@ -240,11 +240,11 @@ export const FAQ = [
   },
   {
     q: "What will they have at the end?",
-    a: "A live app with its own link, or an iPhone app on their phone through TestFlight. They also keep the one-page business model and the plan they wrote. The app, the code and the accounts all belong to your family.",
+    a: "A live app with its own link, or an iPhone app on their phone through TestFlight. They also keep the one-page business model and the plan they wrote. The app, the code and the accounts all belong to the student.",
   },
   {
     q: "How does this help with college applications?",
-    a: "Students finish with a real business they built themselves. They can write about it and speak about it with confidence. It does not guarantee admission anywhere.",
+    a: "Students finish with a real business they built themselves. They can write about it and speak about it with confidence.",
   },
   {
     q: "Is this cheating?",
@@ -252,14 +252,10 @@ export const FAQ = [
   },
   {
     q: "How does payment work?",
-    a: "You pay me directly by Zelle, Venmo or PayPal. A single session is paid before it starts. A bundle is paid in full before the first session.",
-  },
-  {
-    q: "What if we need to reschedule or stop?",
-    a: "Tell me at least 24 hours ahead and we'll move the session. With less notice, the session counts as used. If you stop partway through a bundle, the sessions you used are charged at the single-session price and I refund the rest.",
+    a: "You pay me directly by Zelle, Venmo or PayPal.",
   },
   {
     q: "Can we talk before booking a session?",
-    a: "Yes. You can book a free 30-minute consultation over Zoom. We'll talk about your goals, how the sessions work and my background, and I'll answer your questions.",
+    a: "Absolutely! You can book a free 30-minute consultation over Zoom.",
   },
 ];

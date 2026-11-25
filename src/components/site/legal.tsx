@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { SiteShell } from "./shell";
 
-export const LEGAL_UPDATED = "November 24, 2026";
+export const LEGAL_UPDATED = "November 25, 2026";
 export const LEGAL_EMAIL = "zacklein555@gmail.com";
 
 /* Metadata for a secondary legal page, same pattern as /contact */
