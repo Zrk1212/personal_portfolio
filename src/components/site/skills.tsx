@@ -23,20 +23,56 @@ function Check() {
   );
 }
 
+const PRD_EXAMPLE = "/examples/scent-smart-prd.pdf";
+
 function PlanArt() {
   const rows = ["What the app does", "Who it's for", "The three main screens", "What we build first"];
   return (
-    <div className={`${card} w-[64%] p-5`}>
-      <div className={`${muted} font-[family-name:var(--font-geist-mono)] text-[12px]`}>PRD.md</div>
-      <div className="mt-3 space-y-2.5">
-        {rows.map((r, i) => (
-          <div key={r} className="m-step flex items-center gap-2.5 text-[14px]" style={delay(0.5 + i * 0.9)}>
-            <Check />
-            {r}
-          </div>
-        ))}
+    <div className="flex w-[88%] items-center justify-center gap-[5%] @max-[480px]:-translate-y-[22px]">
+      <div className={`${card} w-[66%] shrink-0 p-[clamp(14px,3.2cqw,20px)]`}>
+        <div className={`${muted} font-[family-name:var(--font-geist-mono)] text-[12px]`}>PRD.md</div>
+        <div className="mt-3 space-y-2.5 @max-[480px]:mt-2 @max-[480px]:space-y-2">
+          {rows.map((r, i) => (
+            <div
+              key={r}
+              className="m-step flex items-center gap-2.5 text-[clamp(12px,2.9cqw,14px)]"
+              style={delay(0.5 + i * 0.9)}
+            >
+              <Check />
+              {r}
+            </div>
+          ))}
+        </div>
       </div>
+      {/* first page of the real example, a second way into the same PDF */}
+      <a
+        href={PRD_EXAMPLE}
+        target="_blank"
+        rel="noopener"
+        tabIndex={-1}
+        aria-label="Example PRD for Scent Smart (PDF)"
+        className="block w-[29%] rotate-[3deg] overflow-hidden rounded-[4px] bg-white shadow-[0_14px_30px_-14px_rgba(0,0,0,0.45)] ring-1 ring-black/5 transition-transform duration-200 hover:rotate-0 hover:-translate-y-1"
+      >
+        <img src="/examples/scent-smart-prd.webp" alt="" width={420} height={543} loading="lazy" decoding="async" className="block h-auto w-full" />
+      </a>
     </div>
+  );
+}
+
+function ExampleBadge() {
+  return (
+    <a
+      href={PRD_EXAMPLE}
+      target="_blank"
+      rel="noopener"
+      aria-label="See an example PRD (opens a PDF in a new tab)"
+      className="m-focus m-th absolute bottom-3 right-3 flex h-9 items-center gap-1.5 rounded-full border border-[var(--rule)] bg-[var(--bg)] px-3.5 text-[13px] @max-[480px]:h-8 @max-[480px]:px-3 @max-[480px]:text-[12px] font-[480] text-[var(--fg)] transition-colors hover:border-[var(--fg)]"
+    >
+      See example
+      <svg viewBox="0 0 12 12" className="h-3 w-3" aria-hidden>
+        <path d="M4 2.5h5.5V8M9.5 2.5L3 9" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" />
+      </svg>
+    </a>
   );
 }
 
@@ -198,7 +234,7 @@ function FeedbackArt() {
 const ART: Record<string, () => React.ReactNode> = {
   "A written plan": PlanArt,
   "Building with Claude Code": CodeArt,
-  "Putting it online": OnlineArt,
+  "Launching it online": OnlineArt,
   "An AI feature": FeatureArt,
   Automations: AutomationArt,
   Skills: SkillArt,
@@ -213,10 +249,11 @@ function Tile({ skill, alt }: { skill: (typeof SKILLS)[number]; alt: boolean }) 
     <div>
       <div
         data-paused={paused}
-        className="m-th relative flex aspect-[3/2] items-center justify-center overflow-hidden rounded-xl"
+        className="m-th relative flex aspect-[3/2] items-center justify-center overflow-hidden rounded-xl @container"
         style={{ backgroundColor: alt ? "var(--tile-2)" : "var(--tile)" }}
       >
         {Art && <Art />}
+        {skill.title === "A written plan" && <ExampleBadge />}
         <button
           type="button"
           onClick={() => setPaused((v) => !v)}
