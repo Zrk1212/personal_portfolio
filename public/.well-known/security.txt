@@ -1,0 +1,5 @@
+# Found a security problem on this site? Email me and I'll look at it right away.
+Contact: mailto:zacklein555@gmail.com
+Expires: 2027-11-25T00:00:00.000Z
+Preferred-Languages: en
+Canonical: https://founder.zrk.ventures/.well-known/security.txt
