@@ -163,19 +163,19 @@ export function About() {
             </h2>
             <div className="m-body m-th mt-5 max-w-[480px] space-y-4" style={{ color: "var(--muted)" }}>
               <p>
-                I&apos;m the founder of Vantage Recruiting, an AI recruiting
-                platform for high school lacrosse players. It&apos;s live on
-                the App Store and the web with 500+ users. I&apos;ve designed,
-                built and launched multiple apps and online businesses with
-                AI, each one from an idea to a real product.
+                I&apos;m a founder and AI product builder. I look for real
+                problems people have, build a practical fix and get it into
+                their hands. I&apos;ve taken multiple apps and online
+                businesses from a first idea to launch, including Vantage
+                Recruiting, and my work has reached more than 5,000 users on
+                the App Store and the web.
               </p>
               <p>
-                Students work with me one-on-one over Zoom. They start with
-                their own idea, write the plan and build it into a live app in
-                a few weeks. I teach the exact tools I use every week, at each
-                student&apos;s pace. They finish with a real business they
-                built themselves, and they can speak about it with confidence
-                on their college applications.
+                Students work with me one-on-one over Zoom to turn their own
+                idea into a live app in just a few weeks. They find a real
+                problem, build an AI-powered solution and launch it to real
+                users. By the end, they&apos;ve gone from idea to execution,
+                with the skills and confidence to build whatever comes next.
               </p>
             </div>
             {/* TODO: add a parent or student testimonial here once you have one. */}
